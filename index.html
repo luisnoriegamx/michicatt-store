@@ -94,6 +94,8 @@
             
             <h1 class="text-3xl font-bold text-pink-secondary mb-2">MichiCatt Store</h1>
             <p class="text-pink-dark mb-6">Panel de Administración</p>
+            <p class="text-pink-dark mb-6">V.1.0.</p>
+
             <form id="loginForm">
                 <div class="mb-4 text-left">
                     <label for="username" class="block text-sm font-medium text-pink-dark mb-1">Usuario</label>
@@ -346,6 +348,21 @@
                                  <p id="noAdmins" class="text-pink-dark/60">No hay admins configurados.</p>
                              </div>
                         </div>
+
+                        <!-- ¡NUEVO! Cambiar Contraseña -->
+                        <div class="mt-8 pt-6 border-t border-pink-100">
+                            <h3 class="text-lg font-semibold text-pink-dark mb-4">Cambiar Mi Contraseña</h3>
+                            <p class="text-sm text-pink-dark/70 mb-4">
+                                Estás logueada como: <strong id="loggedInAsUser">...</strong>
+                            </p>
+                            <form id="changePassForm" class="space-y-3">
+                                <input type="password" id="newAdminPass" class="w-full px-3 py-2 border border-pink-light rounded-lg text-sm" placeholder="Nueva Contraseña" required>
+                                <input type="password" id="confirmAdminPass" class="w-full px-3 py-2 border border-pink-light rounded-lg text-sm" placeholder="Confirmar Contraseña" required>
+                                <button type="button" id="saveNewPassBtn" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-600 transition-all">
+                                    Actualizar Contraseña
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -486,6 +503,10 @@
         const addAdminForm = document.getElementById('addAdminForm');
         const adminUsersList = document.getElementById('adminUsersList');
         const noAdmins = document.getElementById('noAdmins');
+        
+        // ¡NUEVO! Inputs de Cambiar Contraseña
+        const loggedInAsUser = document.getElementById('loggedInAsUser');
+        const saveNewPassBtn = document.getElementById('saveNewPassBtn');
 
         // Estado de la App
         let userId = null;
@@ -503,6 +524,7 @@
         let editingProductId = null; // ¡NUEVO! Para editar productos
         let adminUsers = []; // ¡NUEVO! Caché local de admins
         let ordersData = []; // ¡NUEVO! Caché local de pedidos
+        let currentAdminUsername = null; // ¡NUEVO! Para saber quién está logueado
 
         // Referencias a Colecciones de Firestore
         let productCollectionRef;
@@ -549,7 +571,10 @@
 
             if (foundUser) {
                 // ¡Éxito! Mostrar App y ocultar Login
-                welcomeUser.textContent = `¡Hola, ${user}!`;
+                currentAdminUsername = user; // ¡NUEVO! Guardamos el admin actual
+                welcomeUser.textContent = `¡Hola, ${currentAdminUsername}!`;
+                loggedInAsUser.textContent = currentAdminUsername; // ¡NUEVO!
+                
                 loginScreen.classList.add('hidden');
                 appContainer.classList.remove('hidden');
             } else {
@@ -657,6 +682,9 @@
             
             // ¡NUEVO! Formulario de Admin
             addAdminForm.addEventListener('submit', onSaveAdminUser);
+            
+            // ¡NUEVO! Botón de Cambiar Contraseña
+            saveNewPassBtn.addEventListener('click', onSaveNewPassword);
 
             // Búsqueda
             adminProductSearch.addEventListener('input', renderAdminProductsList);
@@ -765,11 +793,15 @@
                     // Si no hay NINGÚN admin, crear el de por defecto
                     const defaultUser = "Michicatt";
                     const defaultPass = "Strawberry";
+                    
+                    // ¡FIX! Agregar a caché local para que el primer login funcione
+                    adminUsers = [{ id: defaultUser, pass: defaultPass }]; 
+                    
                     setDoc(doc(db, 'users', userId, 'admins', defaultUser), { pass: defaultPass })
                         .catch(e => console.error("Error creating default admin:", e));
+                        
                     noAdmins.classList.remove('hidden');
-                    adminUsersList.innerHTML = '';
-                    // No agregamos a 'adminUsers' aquí, esperamos al siguiente snapshot
+                    adminUsersList.innerHTML = renderAdminUser(defaultUser); // Renderizar el usuario
                 } else {
                     noAdmins.classList.add('hidden');
                     const adminItems = [];
@@ -812,9 +844,9 @@
                     }
                 }
                 
-                // Editar Producto
-                if (e.target.classList.contains('edit-product')) {
-                    loadProductForEditing(id);
+                // ¡NUEVO! Borrar admin
+                if (e.target.classList.contains('delete-admin')) {
+                    const item = e.target.closest('div[data-id]');
                 }
                 return;
             }
@@ -1395,6 +1427,37 @@
             } catch (error) {
                 console.error("Error al guardar admin:", error);
                 showToast("Error al guardar admin", true);
+            }
+        }
+        
+        // ¡NUEVA FUNCIÓN! Cambiar Contraseña del Admin Logueado
+        async function onSaveNewPassword() {
+            const newPass = document.getElementById('newAdminPass').value;
+            const confirmPass = document.getElementById('confirmAdminPass').value;
+
+            if (!newPass || !confirmPass) {
+                showToast("Completa ambos campos", true); 
+                return;
+            }
+            if (newPass !== confirmPass) {
+                showToast("Las contraseñas no coinciden", true); 
+                return;
+            }
+            if (!currentAdminUsername) { // Check de seguridad
+                showToast("Error: No se ha identificado al admin", true); 
+                return;
+            }
+            
+            try {
+                // Actualizamos el documento del admin actual
+                await setDoc(doc(db, 'users', userId, 'admins', currentAdminUsername), { pass: newPass });
+                showToast("¡Contraseña actualizada!");
+                // Limpiar campos
+                document.getElementById('newAdminPass').value = '';
+                document.getElementById('confirmAdminPass').value = '';
+            } catch (error) {
+                console.error("Error al cambiar contraseña:", error);
+                showToast("Error al cambiar contraseña", true);
             }
         }
 

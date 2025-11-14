@@ -3,24 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MichiCatt Store</title> <!-- Se actualizará dinámicamente -->
-    
-    <!-- Meta tags para PWA -->
-    <meta name="theme-color" content="#F472B6"/>
+    <title>MichiCatt Store</title> <meta name="theme-color" content="#F472B6"/>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="MichiCatt Store">
     
-    <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Carga de jsPDF para generar PDFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Carga de AutoTable para jsPDF (para tablas) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     
-    <!-- Configuración de Tailwind y Estilos Personalizados -->
     <script>
         tailwind.config = {
             theme: {
@@ -86,10 +79,8 @@
 </head>
 <body class="bg-pink-bg text-pink-dark font-sans relative min-h-screen overflow-x-hidden">
 
-    <!-- Pantalla de Login -->
     <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-pink-primary p-4">
         <div class="bg-white w-full max-w-sm p-8 rounded-2xl shadow-2xl text-center">
-            <!-- Espacio para el Logo en Login -->
             <img id="logoImageLogin" src="" alt="Logo" class="max-h-20 mx-auto mb-4 hidden">
             
             <h1 class="text-3xl font-bold text-pink-secondary mb-2">MichiCatt Store</h1>
@@ -111,20 +102,16 @@
         </div>
     </div>
 
-    <!-- Contenido Principal de la App (Oculto por defecto) -->
     <div id="appContainer" class="hidden">
         
-        <!-- Cabecera -->
         <header class="bg-white shadow-md p-4 sticky top-0 z-40">
             <div class="container mx-auto flex justify-between items-center">
                 
-                <!-- Logo y Título -->
                 <div class="flex items-center gap-3">
                     <img id="logoImageHeader" src="" alt="Logo" class="max-h-10 hidden">
                     <h1 id="appNameTitle" class="text-xl sm:text-2xl font-bold text-pink-secondary">MichiCatt Store</h1>
                 </div>
 
-                <!-- Botón de Cerrar Sesión -->
                 <div class="flex items-center gap-4">
                     <span id="welcomeUser" class="text-sm text-pink-dark font-medium hidden sm:block"></span>
                     <button id="logoutButton" class="text-pink-dark/70 hover:text-pink-primary" title="Cerrar Sesión">
@@ -136,7 +123,6 @@
             </div>
         </header>
 
-        <!-- Navegación por Pestañas -->
         <nav class="bg-white shadow-sm sticky top-[68px] sm:top-[76px] z-30">
             <div class="container mx-auto px-4">
                 <div class="flex border-b border-pink-100 overflow-x-auto no-scrollbar">
@@ -156,28 +142,22 @@
             </div>
         </nav>
 
-        <!-- Contenedor de Pestañas -->
         <main class="container mx-auto p-4 md:p-6">
             
-            <!-- Pestaña: Cotizador -->
             <div id="cotizador" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     
-                    <!-- Columna 1: Mi Catálogo -->
                     <div class="bg-white p-6 rounded-2xl shadow-lg">
                         <h2 class="text-2xl font-bold text-pink-secondary mb-4">Mi Catálogo</h2>
                         <input type="text" id="quoteProductSearch" class="w-full px-4 py-2 border border-pink-light rounded-lg mb-4" placeholder="Buscar producto...">
                         <div id="quoteCatalogList" class="max-h-96 overflow-y-auto pr-2 space-y-2">
-                            <!-- Lista de productos del catálogo se cargará aquí -->
                             <p id="noCatalogProducts" class="text-pink-dark/60">Agrega productos en la pestaña 'Productos'.</p>
                         </div>
                     </div>
 
-                    <!-- Columna 2: Nuevo Pedido -->
                     <div class="bg-white p-6 rounded-2xl shadow-lg space-y-4">
                         <h2 class="text-2xl font-bold text-pink-secondary">Nuevo Pedido</h2>
                         
-                        <!-- Formulario de Pedido -->
                         <form id="newOrderForm">
                             <div>
                                 <label for="orderClientName" class="block text-sm font-medium text-pink-dark mb-1">Nombre del Cliente (Manual)</label>
@@ -189,14 +169,11 @@
                             </div>
                         </form>
                         
-                        <!-- Carrito de Pedido -->
                         <h3 class="text-lg font-semibold text-pink-dark pt-2">Carrito de Pedido</h3>
                         <div id="orderCartItems" class="mb-4 max-h-60 overflow-y-auto pr-2 space-y-2">
-                            <!-- Los artículos del carrito se agregarán aquí -->
                             <p id="emptyCart" class="text-pink-dark/60">Agrega productos desde el catálogo.</p>
                         </div>
                         
-                        <!-- Resumen de Costos -->
                         <div class="bg-pink-bg p-4 rounded-lg space-y-2">
                             <h4 class="text-lg font-bold text-pink-dark">Resumen del Pedido</h4>
                             <div class="flex justify-between">
@@ -213,7 +190,6 @@
                             </div>
                         </div>
                         
-                        <!-- Botones de Acción -->
                         <div class="flex gap-4">
                             <button type="button" id="clearOrderBtn" class="w-1/2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300">
                                 Limpiar
@@ -226,20 +202,16 @@
                 </div>
             </div>
 
-            <!-- Pestaña: Pedidos Guardados -->
             <div id="pedidos" class="tab-content hidden">
                 <h2 class="text-2xl font-bold text-pink-secondary mb-6">Pedidos Guardados</h2>
                 <div id="ordersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Los pedidos guardados se cargarán aquí -->
                     <p id="noOrders" class="col-span-full text-pink-dark/60">No hay pedidos guardados.</p>
                 </div>
             </div>
 
-            <!-- Pestaña: Productos -->
             <div id="productos" class="tab-content hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
-                    <!-- Columna 1: Agregar/Editar Producto -->
                     <div class="lg:col-span-1 space-y-6">
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
                             <h2 class="text-2xl font-bold text-pink-secondary mb-6">Agregar Producto</h2>
@@ -256,7 +228,6 @@
                                     <label for="productMargin" class="block text-sm font-medium text-pink-dark mb-1">% de Ganancia (ej. 50)</label>
                                     <input type="number" id="productMargin" min="0" max="99.99" step="0.01" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" required>
                                 </div>
-                                <!-- Precio al Cliente (Solo Lectura) -->
                                 <div class="mb-6">
                                     <label for="productPricePublic" class="block text-sm font-medium text-pink-dark mb-1">Precio al Cliente (Calculado)</label>
                                     <input type="text" id="productPricePublic" class="w-full px-4 py-2 border border-pink-light rounded-lg bg-pink-bg text-pink-dark font-bold outline-none" readonly>
@@ -264,7 +235,6 @@
                                 <button type="submit" id="saveProductBtn" class="w-full bg-pink-primary text-white py-2 px-4 rounded-lg font-semibold shadow-lg hover:bg-pink-secondary transition-all duration-300 btn-pulse">
                                     Guardar Producto
                                 </button>
-                                <!-- Botón de Cancelar Edición -->
                                 <button type="button" id="productEditCancelBtn" class="w-full mt-2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300 hidden">
                                     Cancelar Edición
                                 </button>
@@ -272,12 +242,10 @@
                         </div>
                     </div>
 
-                    <!-- Columna 2 y 3: Mi Catálogo -->
                     <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
                         <h2 class="text-2xl font-bold text-pink-secondary mb-4">Mi Catálogo de Productos</h2>
                         <input type="text" id="adminProductSearch" class="w-full px-4 py-2 border border-pink-light rounded-lg mb-4" placeholder="Buscar producto...">
                         <div id="productsList" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
-                            <!-- Lista de productos se cargará aquí -->
                             <p id="noProducts" class="col-span-full text-pink-dark/60">No hay productos guardados.</p>
                         </div>
                     </div>
@@ -285,20 +253,17 @@
             </div>
 
             
-            <!-- Pestaña: Configuración -->
             <div id="config" class="tab-content hidden">
                 <div class="max-w-2xl mx-auto space-y-6">
                     <div class="bg-white p-6 rounded-2xl shadow-lg">
                         <h2 class="text-2xl font-bold text-pink-secondary mb-6">Configuración General</h2>
                         
                         <div class="space-y-4">
-                            <!-- Nombre de la Tienda -->
                             <div>
                                 <label for="storeName" class="block text-sm font-medium text-pink-dark mb-1">Nombre de la Tienda</label>
                                 <input type="text" id="storeName" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
                             </div>
 
-                            <!-- URL del Logo -->
                             <div>
                                 <label for="logoUrl" class="block text-sm font-medium text-pink-dark mb-1">URL del Logo de la Tienda</label>
                                 <input type="url" id="logoUrl" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" placeholder="https://ejemplo.com/logo.png">
@@ -309,7 +274,6 @@
                                 <input type="number" id="shippingCost" min="0" step="0.01" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
                             </div>
 
-                            <!-- Configuración de Folios -->
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label for="folioPrefix" class="block text-sm font-medium text-pink-dark mb-1">Prefijo de Folio</label>
@@ -327,21 +291,24 @@
                         </button>
                     </div>
 
-                    <!-- ¡ELIMINADO! El panel de gestión de admin ya no es necesario -->
-                    <!-- ¡ELIMINADO! El panel de cambiar contraseña ya no es necesario -->
-                    
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h3 class="text-xl font-semibold text-pink-dark mb-4">Gestión de Cuenta</h3>
+                        <p class="text-sm text-pink-dark/70">
+                            Para agregar nuevos administradores o cambiar tu contraseña, debes hacerlo de forma segura desde la
+                            <a href="https://console.firebase.google.com/" target="_blank" class="text-pink-primary font-medium underline">Consola de Firebase</a>
+                            en la sección de <strong>Authentication</strong>.
+                        </p>
+                    </div>
                 </div>
             </div>
             
         </main>
     </div>
 
-    <!-- Notificación Toast -->
     <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-xl opacity-0 transform translate-y-10 transition-all duration-500 z-50">
         ¡Guardado correctamente!
     </div>
 
-    <!-- Script de Registro de PWA -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -356,11 +323,6 @@
         }
     </script>
 
-    <!-- ================================================================== -->
-    <!-- Carga de Firebase y Lógica de la App -->
-    <!-- ================================================================== -->
-    
-    <!-- Importar Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
@@ -467,8 +429,6 @@
         const nextFolioInput = document.getElementById('nextFolio');
         const saveSettingsBtn = document.getElementById('saveSettingsBtn');
         
-        // ¡ELIMINADO! Referencias a gestión de admin simulado
-
         // Estado de la App
         let userId = null;
         // Objeto de configuración (se carga desde Firebase)
@@ -485,7 +445,7 @@
         let editingProductId = null; // Para editar productos
         let ordersData = []; // Caché local de pedidos
         
-        // ¡NUEVO! Listeners (unsubscribers) de Firestore
+        // Listeners (unsubscribers) de Firestore
         let productListener = null;
         let orderListener = null;
         let settingsListener = null;
@@ -584,15 +544,15 @@
         }
 
         // ------------------------------------------------------------------
-        // Inicialización de Firestore
+        // Inicialización de Firestore (¡RUTAS COMPARTIDAS!)
         // ------------------------------------------------------------------
         
         function initFirestoreRefs() {
             if (!userId) return;
-            // Rutas privadas del usuario
-            productCollectionRef = collection(db, 'users', userId, 'products');
-            ordersCollectionRef = collection(db, 'users', userId, 'orders');
-            settingsDocRef = doc(db, 'users', userId, 'config', 'main');
+            // ¡RUTAS CAMBIADAS! Ya no dependen de 'userId'
+            productCollectionRef = collection(db, 'products');
+            ordersCollectionRef = collection(db, 'orders');
+            settingsDocRef = doc(db, 'config', 'main');
         }
         
         // ------------------------------------------------------------------
@@ -667,8 +627,6 @@
             saveSettingsBtn.addEventListener('click', onSaveSettings); 
             productEditCancelBtn.addEventListener('click', cancelProductEdit); 
             
-            // ¡ELIMINADO! El logoutButton se maneja arriba
-
             // Búsqueda
             adminProductSearch.addEventListener('input', renderAdminProductsList);
             quoteProductSearch.addEventListener('input', renderQuoteCatalogList);
@@ -821,7 +779,7 @@
                 // Borrar Producto
                 if (e.target.classList.contains('delete-product')) {
                     if (confirm("¿Estás segura de borrar este producto del catálogo?")) {
-                        deleteDoc(doc(db, 'users', userId, 'products', id))
+                        deleteDoc(doc(db, 'products', id))
                             .then(() => showToast("Producto eliminado"))
                             .catch(e => showToast("Error al eliminar", true));
                     }
@@ -855,7 +813,7 @@
                 // Botón de Eliminar Pedido
                 if (e.target.classList.contains('delete-order')) {
                     if (confirm("¿Estás segura de borrar este pedido? No se puede deshacer.")) {
-                        deleteDoc(doc(db, 'users', userId, 'orders', orderId))
+                        deleteDoc(doc(db, 'orders', orderId))
                             .then(() => showToast("Pedido eliminado"))
                             .catch(e => showToast("Error al eliminar", true));
                     }
@@ -927,7 +885,7 @@
             try {
                 if (editingProductId) {
                     // --- MODO ACTUALIZACIÓN ---
-                    await setDoc(doc(db, 'users', userId, 'products', editingProductId), productData);
+                    await setDoc(doc(db, 'products', editingProductId), productData);
                     showToast("Producto actualizado");
                 } else {
                     // --- MODO CREACIÓN ---
@@ -994,7 +952,6 @@
                             Público: ${formatCurrency(product.price)}
                         </p>
                     </div>
-                    <!-- Botones de Edición -->
                     <div class="flex gap-2">
                         <button class="edit-product text-blue-500 hover:text-blue-700 font-semibold text-lg" title="Editar">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM5 13H3V6.414l5-5L9.414 3 5 7.414V13zM15 17H5v-5l-2-2v7a2 2 0 002 2h10a2 2 0 002-2v-2l-2 2z"/></svg>
@@ -1078,7 +1035,7 @@
             const distance = parseFloat(orderKmInput.value) || 0;
             
             const subtotal = orderCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            // Usar appSettings.shippingCost
+            // ¡CORREGIDO! Usar appSettings.shippingCost
             const shipping = distance * appSettings.shippingCost;
             const total = subtotal + shipping;
 
@@ -1141,7 +1098,7 @@
                 if (editingOrderId) {
                     // --- MODO ACTUALIZACIÓN ---
                     // No actualizamos la fecha ni el folio, solo los datos
-                    await setDoc(doc(db, 'users', userId, 'orders', editingOrderId), orderData, { merge: true });
+                    await setDoc(doc(db, 'orders', editingOrderId), orderData, { merge: true });
                     showToast("Pedido actualizado");
                 } else {
                     // --- MODO CREACIÓN (NUEVO PEDIDO) ---
@@ -1208,7 +1165,7 @@
         // ------------------------------------------------------------------
 
         function renderOrderCard(order) {
-            const date = order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString('es-MX') : 'Fecha N/A';
+            const date = order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString('es-MX') : 'Fecha N/D';
             
             const itemsHtml = order.items.map(item => `
                 <li class="text-sm text-pink-dark/80">${item.quantity}x ${item.name} - ${formatCurrency(item.price * item.quantity)}</li>
@@ -1218,7 +1175,6 @@
                 <div class="bg-white p-5 rounded-2xl shadow-lg" data-id="${order.id}">
                     <div class="flex justify-between items-start">
                         <h3 class="font-bold text-lg text-pink-secondary">${order.clientName}</h3>
-                        <!-- Folio -->
                         <span class="text-xs font-mono bg-pink-light text-pink-dark px-2 py-1 rounded-full">${order.folio || 'SIN-FOLIO'}</span>
                     </div>
                     <p class="text-sm text-pink-dark/60 mb-3">ID: ${order.id.substring(0, 6)} | ${date}</p>
@@ -1231,7 +1187,6 @@
                         <p class="flex justify-between text-base font-bold text-pink-secondary"><span>Total:</span> <span>${formatCurrency(order.total)}</span></p>
                     </div>
 
-                    <!-- Botones de Acción -->
                     <div class="mt-6 grid grid-cols-3 gap-2">
                         <button class="download-order-pdf w-full text-xs bg-blue-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-blue-600 transition-all" title="Descargar PDF">
                             PDF
@@ -1252,7 +1207,7 @@
         // ------------------------------------------------------------------
         
         function getBasePDF(title) {
-            // ¡CORRECCIÓN DE BUG! Se inicializa aquí para asegurar que la librería esté cargada
+            // Se inicializa aquí para asegurar que la librería esté cargada
             const { jsPDF } = window.jspdf; 
             const doc = new jsPDF();
             doc.setFont("helvetica", "normal");

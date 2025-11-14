@@ -1,0 +1,24 @@
+{
+  "name": "MichiCatt Store",
+  "short_name": "MichiCatt",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#FFF1F2",
+  "theme_color": "#F472B6",
+  "orientation": "portrait",
+  "description": "App de gestión para MichiCatt Store",
+  "icons": [
+    {
+      "src": "https://placehold.co/192x192/F472B6/FFFFFF?text=MC-S&font=sans-serif",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://placehold.co/512x512/F472B6/FFFFFF?text=MC-S&font=sans-serif",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}

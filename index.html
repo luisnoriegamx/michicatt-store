@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MichiCatt Store</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Fuente Inter -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Fondo de huellitas semi-transparente */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+            /* SVG de huella de gato, URL-encoded */
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Cpath fill="%23E53E90" fill-opacity="0.06" d="M50 85C40 85 35 75 35 70C35 65 40 60 50 60C60 60 65 65 65 70C65 75 60 85 50 85z M25 55C20 55 15 50 15 45C15 40 20 35 25 35C30 35 35 40 35 45C35 50 30 55 25 55z M75 55C70 55 65 50 65 45C65 40 70 35 75 35C80 35 85 40 85 45C85 50 80 55 75 55z M30 25C25 25 20 20 20 15C20 10 25 5 30 5C35 5 40 10 40 15C40 20 35 25 30 25z M70 25C65 25 60 20 60 15C60 10 65 5 70 5C75 5 80 10 80 15C80 20 75 25 70 25z"/%3E%3C/svg%3E');
+            background-repeat: repeat;
+            background-size: 120px;
+        }
+        /* Ocultar secciones por defecto */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Estilos para el modal */
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+    </style>
+</head>
+<body class="bg-pink-50 text-gray-800">
+
+    <!-- Pantalla de Login -->
+    <div id="login-screen" class="fixed inset-0 bg-gray-900 text-white flex items-center justify-center p-4">
+        <div class="w-full max-w-sm">
+            <h2 class="text-3xl font-bold text-center text-pink-400 mb-6">MichiCatt Store</h2>
+            <div class="bg-gray-800 p-8 rounded-lg shadow-xl">
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label for="login-user" class="block text-sm font-medium text-gray-300 mb-1">Usuario</label>
+                        <input type="text" id="login-user" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="login-pass" class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
+                        <input type="password" id="login-pass" required class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-pink-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-pink-700 transition-colors">
+                        Entrar
+                    </button>
+                    <p id="login-error" class="text-red-400 text-sm pt-2 text-center hidden">Usuario o contraseña incorrectos.</p>
+                </form>
+            </div>
+            <p class="text-center text-gray-500 text-xs mt-4">
+                Login simulado. No usar contraseñas reales en este modo.
+            </p>
+        </div>
+    </div>
+
+    <!-- Contenedor Principal (Oculto por defecto) -->
+    <div id="app-container" class="container mx-auto max-w-7xl p-4 hidden">
+
+        <!-- Cabecera -->
+        <header class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold text-pink-700">MichiCatt Store</h1>
+            <p class="text-gray-600">Administra tus productos, clientes, cotizaciones y pagos.</p>
+        </header>
+
+        <!-- Pestañas de Navegación -->
+        <nav class="bg-white rounded-lg shadow-sm mb-6">
+            <div class="flex border-b border-gray-200 overflow-x-auto">
+                <button data-tab="cotizador" class="tab-btn active-tab py-3 px-4 sm:py-4 sm:px-6 flex-shrink-0 font-semibold text-pink-600 border-b-2 border-pink-600">
+                    Cotizador
+                </button>
+                <button data-tab="cotizaciones" class="tab-btn py-3 px-4 sm:py-4 sm:px-6 flex-shrink-0 font-semibold text-gray-500 hover:text-pink-600">
+                    Cotizaciones
+                </button>
+                <button data-tab="pedidos" class="tab-btn py-3 px-4 sm:py-4 sm:px-6 flex-shrink-0 font-semibold text-gray-500 hover:text-pink-600">
+                    Pedidos y Anticipos
+                </button>
+                <button data-tab="admin" class="tab-btn py-3 px-4 sm:py-4 sm:px-6 flex-shrink-0 font-semibold text-gray-500 hover:text-pink-600">
+                    Admin
+                </button>
+            </div>
+        </nav>
+
+        <!-- Contenido de las Pestañas -->
+        <main>
+            <!-- SECCIÓN: COTIZADOR (NUEVO FLUJO DE CARRITO) -->
+            <section id="cotizador-section" class="tab-content active">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Columna de Cotización (Carrito) -->
+                    <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-md space-y-6">
+                        
+                        <!-- 1. Agregar Productos -->
+                        <div>
+                            <h2 class="text-2xl font-semibold mb-4">1. Agregar Productos al Carrito</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div class="sm:col-span-2">
+                                    <label for="quote-product" class="block text-sm font-medium text-gray-700 mb-1">Producto</label>
+                                    <select id="quote-product" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                                        <option value="">Seleccione un producto...</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="quote-quantity" class="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
+                                    <input type="number" id="quote-quantity" value="1" min="1" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                                </div>
+                            </div>
+                            <button id="add-to-cart-btn" class="mt-4 w-full bg-pink-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-pink-700 transition-colors">
+                                Agregar al Carrito
+                            </button>
+                        </div>
+                        
+                        <!-- 2. Carrito de Cotización -->
+                        <div>
+                            <h2 class="text-2xl font-semibold mb-4">Carrito de Cotización</h2>
+                            <div id="quote-cart-list" class="space-y-3">
+                                <p class="text-gray-500">El carrito está vacío.</p>
+                                <!-- Items del carrito se agregarán aquí -->
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Columna de Resumen -->
+                    <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
+                        <!-- 2. Costos de Envío -->
+                        <div>
+                            <h2 class="text-2xl font-semibold mb-4">2. Costos de Envío</h2>
+                            <div>
+                                <label for="quote-distance" class="block text-sm font-medium text-gray-700 mb-1">Distancia de Envío (km)</label>
+                                <input type="number" id="quote-distance" value="0" min="0" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500" placeholder="Kms para costo de envío">
+                            </div>
+                        </div>
+
+                        <!-- 3. Resumen Total -->
+                        <div>
+                            <h2 class="text-2xl font-semibold mb-4">3. Resumen Total</h2>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Subtotal Productos:</span>
+                                    <span id="quote-subtotal" class="font-semibold">$0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Envío:</span>
+                                    <span id="quote-shipping" class="font-semibold">$0.00</span>
+                                </div>
+                                <hr>
+                                <div class="flex justify-between text-xl font-bold">
+                                    <span>Total (Cliente):</span>
+                                    <span id="quote-total" class="text-pink-700">$0.00</span>
+                                </div>
+                            </div>
+                            <button id="save-quote-btn" class="mt-6 w-full bg-pink-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-pink-700 transition-colors">
+                                Guardar Cotización
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: COTIZACIONES GUARDADAS -->
+            <section id="cotizaciones-section" class="tab-content">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4">Cotizaciones Guardadas</h2>
+                    <div id="quote-list" class="space-y-6">
+                        <!-- Las cotizaciones se cargarán aquí -->
+                        <p class="text-gray-500">No hay cotizaciones guardadas.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: PEDIDOS Y ANTICIPOS -->
+            <section id="pedidos-section" class="tab-content">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4">Gestión de Pedidos y Anticipos</h2>
+                    <div id="order-list" class="space-y-6">
+                        <!-- Los pedidos se cargarán aquí -->
+                        <p class="text-gray-500">No hay pedidos pendientes.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: ADMIN (Contiene Productos, Clientes, Ajustes) -->
+            <section id="admin-section" class="tab-content">
+                <div class="space-y-6">
+
+                    <!-- SECCIÓN: PRODUCTOS (Movida aquí) -->
+                    <section id="productos-section" class="tab-content active">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Formulario de Producto -->
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h2 class="text-2xl font-semibold mb-4">Agregar Producto</h2>
+                                <form id="product-form" class="space-y-4">
+                                    <div>
+                                        <label for="product-name" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Producto</label>
+                                        <input type="text" id="product-name" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                                    </div>
+                                    <div>
+                                        <label for="product-cost" class="block text-sm font-medium text-gray-700 mb-1">Precio Real (Costo)</label>
+                                        <input type="number" id="product-cost" step="0.01" min="0" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                                    </div>
+                                    <div>
+                                        <label for="product-markup" class="block text-sm font-medium text-gray-700 mb-1">Margen de Ganancia (%)</label>
+                                        <input type="number" id="product-markup" min="0" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500" placeholder="Ej: 30 para 30%">
+                                    </div>
+                                    <button type="submit" class="w-full bg-pink-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-pink-700 transition-colors">
+                                        Guardar Producto
+                                    </button>
+                                </form>
+                            </div>
+                            <!-- Lista de Productos -->
+                            <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                                <h2 class="text-2xl font-semibold mb-4">Mis Productos</h2>
+                                <!-- CAMPO DE BÚSQUEDA AÑADIDO -->
+                                <input type="search" id="product-search" placeholder="Buscar producto..." class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                                <div id="product-list" class="space-y-4">
+                                    <!-- Los productos se cargarán aquí -->
+                                    <p class="text-gray-500">No hay productos. Agrega uno para empezar.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SECCIÓN: CLIENTES (Movida aquí) -->
+                    <section id="clientes-section" class="tab-content active">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Formulario de Cliente -->
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h2 class="text-2xl font-semibold mb-4">Agregar Cliente</h2>
+                                <form id="client-form" class="space-y-4">
+                                    <div>
+                                        <label for="client-name" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Cliente</label>
+                                        <input type="text" id="client-name" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                                    </div>
+                                    <div>
+                                        <label for="client-email" class="block text-sm font-medium text-gray-700 mb-1">Email (para notificaciones)</label>
+                                        <input type="email" id="client-email" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                                    </div>
+                                    <button type="submit" class="w-full bg-pink-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-pink-700 transition-colors">
+                                        Guardar Cliente
+                                    </button>
+                                </form>
+                            </div>
+                            <!-- Lista de Clientes -->
+                            <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                                <h2 class="text-2xl font-semibold mb-4">Mis Clientes</h2>
+                                <div id="client-list" class="space-y-4">
+                                    <!-- Los clientes se cargarán aquí -->
+                                    <p class="text-gray-500">No hay clientes. Agrega uno para empezar.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SECCIÓN: AJUSTES (Movida aquí) -->
+                    <section id="ajustes-section" class="tab-content active">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h2 class="text-2xl font-semibold mb-4">Ajustes de la Aplicación</h2>
+                                <form id="settings-form" class="space-y-4">
+                                    <div>
+                                        <label for="settings-cost-km" class="block text-sm font-medium text-gray-700 mb-1">Costo de Envío por Kilómetro ($)</label>
+                                        <input type="number" id="settings-cost-km" step="0.01" min="0" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500" placeholder="Ej: 5.50">
+                                    </div>
+                                    <button type="submit" class="w-full bg-pink-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-pink-700 transition-colors">
+                                        Guardar Ajustes
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </section>
+
+        </main>
+
+    </div> <!-- Fin del Contenedor Principal -->
+
+    <!-- MODAL: Alerta Personalizada -->
+    <div id="alert-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="alert-title">
+        <div class="modal-content bg-white w-full max-w-md p-6 rounded-lg shadow-xl transform scale-95 opacity-0">
+            <h3 id="alert-title" class="text-xl font-semibold mb-4">Notificación</h3>
+            <p id="alert-message" class="text-gray-700 mb-6">Este es un mensaje de alerta.</p>
+            <button id="alert-close-btn" class="w-full bg-pink-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-pink-700 transition-colors">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: Guardar Cotización -->
+    <div id="save-quote-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="quote-title">
+        <div class="modal-content bg-white w-full max-w-md p-6 rounded-lg shadow-xl transform scale-95 opacity-0">
+            <h3 id="quote-title" class="text-xl font-semibold mb-4">Asignar Cotización a Cliente</h3>
+            <form id="save-quote-form">
+                <p class="mb-4">Vas a guardar una cotización con un total de <span id="quote-modal-total" class="font-bold text-pink-700"></span>.</p>
+                <div>
+                    <label for="quote-client-select" class="block text-sm font-medium text-gray-700 mb-1">Seleccionar Cliente</label>
+                    <select id="quote-client-select" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                        <option value="">Seleccione un cliente...</option>
+                    </select>
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="button" id="save-quote-cancel-btn" class="w-1/2 bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="w-1/2 bg-pink-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-pink-700 transition-colors">
+                        Confirmar Cotización
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Agregar Pago/Anticipo -->
+    <div id="payment-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="payment-title">
+        <div class="modal-content bg-white w-full max-w-md p-6 rounded-lg shadow-xl transform scale-95 opacity-0">
+            <h3 id="payment-title" class="text-xl font-semibold mb-4">Registrar Anticipo</h3>
+            <form id="payment-form">
+                <input type="hidden" id="payment-order-id">
+                <p class="mb-4">Registrando pago para el pedido de <span id="payment-modal-client" class="font-bold"></span>.</p>
+                <p class="mb-4">Saldo Pendiente: <span id="payment-modal-balance" class="font-bold text-red-600"></span></p>
+                <div>
+                    <label for="payment-amount" class="block text-sm font-medium text-gray-700 mb-1">Monto del Anticipo</label>
+                    <input type="number" id="payment-amount" step="0.01" min="0.01" required class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                </div>
+                <div class="mt-4">
+                    <label for="payment-note" class="block text-sm font-medium text-gray-700 mb-1">Nota (Opcional)</label>
+                    <input type="text" id="payment-note" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500" placeholder="Ej: Transferencia bancaria">
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button type="button" id="payment-cancel-btn" class="w-1/2 bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="w-1/2 bg-pink-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-pink-700 transition-colors">
+                        Guardar Pago
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- SDK de Firebase -->
+    <script type="module">
+        // Importa las funciones necesarias de los SDK de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            onAuthStateChanged,
+            signInWithCustomToken // Lo dejamos por si acaso, pero usaremos signInAnonymously
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            doc, 
+            setDoc,
+            getDoc, 
+            updateDoc,
+            deleteDoc, 
+            onSnapshot, 
+            query, 
+            where, 
+            serverTimestamp,
+            increment
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Configuración de Firebase ---
+        // ¡LISTO! Esta es tu configuración personal.
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7XyxOW8rWjptvHt4u6ebf-9FZj4otA5Q",
+          authDomain: "michicatt-store.firebaseapp.com",
+          projectId: "michicatt-store",
+          storageBucket: "michicatt-store.firebasestorage.app",
+          messagingSenderId: "742378744678",
+          appId: "1:742378744678:web:8fdac890199575d414f6a7"
+        };
+            
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        // Inicializa jsPDF
+        const { jsPDF } = window.jspdf;
+
+        let userId = null; // ID del usuario autenticado
+        
+        // Almacenes de estado globales
+        let allProducts = [];
+        let allClients = [];
+        let allQuotes = []; // Para PDF
+        let allOrders = []; // Para PDF
+        let appSettings = { costPerKm: 0 };
+        let quoteCart = []; // <-- NUEVO: Carrito de cotización
+        let currentQuoteData = {}; // <-- Para guardar temporalmente los datos del carrito
+
+        // --- LÓGICA DE LOGIN (SIMULADO) ---
+        const loginScreen = document.getElementById('login-screen');
+        const appContainer = document.getElementById('app-container');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+
+            // ADVERTENCIA: Contraseña hardcodeada. Esto NO es seguro.
+            if (user === 'Michicatt' && pass === 'Strawberry') {
+                loginScreen.classList.add('hidden'); // Ocultar login
+                appContainer.classList.remove('hidden'); // Mostrar app
+                signIn(); // Iniciar sesión en Firebase (¡AHORA SÍ!)
+            } else {
+                loginError.classList.remove('hidden'); // Mostrar error
+            }
+        });
+
+
+        // --- Lógica de Autenticación (Firebase) ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("Usuario autenticado:", user.uid);
+                userId = user.uid;
+                initializeAppLogic();
+            } else {
+                console.log("Usuario no autenticado.");
+                userId = null;
+            }
+        });
+
+        async function signIn() {
+            try {
+                 // Esta lógica ahora es para un inicio de sesión real (anónimo)
+                 await signInAnonymously(auth);
+                 console.log("Inicio de sesión anónimo exitoso.");
+
+            } catch (error) {
+                console.error("Error al autenticar:", error);
+                showAlert("Error grave: No se pudo conectar con la base de datos. " + error.message);
+            }
+        }
+
+        // --- Lógica de Modales (Alertas) ---
+        const alertModal = document.getElementById('alert-modal');
+        const alertMessage = document.getElementById('alert-message');
+        const alertCloseBtn = document.getElementById('alert-close-btn');
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
+            modal.querySelector('.modal-content').classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                modal.classList.add('opacity-0');
+                modal.classList.add('hidden');
+            }, 250);
+        }
+        
+        function showAlert(message) {
+            alertMessage.textContent = message;
+            showModal('alert-modal');
+        }
+        alertCloseBtn.addEventListener('click', () => hideModal('alert-modal'));
+
+        // Listeners para cerrar otros modales
+        document.getElementById('save-quote-cancel-btn').addEventListener('click', () => hideModal('save-quote-modal'));
+        document.getElementById('payment-cancel-btn').addEventListener('click', () => hideModal('payment-modal'));
+
+
+        // --- Lógica de Navegación por Pestañas ---
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+
+                // Actualizar botones
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active-tab', 'text-pink-600', 'border-pink-600');
+                    btn.classList.add('text-gray-500', 'hover:text-pink-600');
+                });
+                button.classList.add('active-tab', 'text-pink-600', 'border-pink-600');
+                button.classList.remove('text-gray-500', 'hover:text-pink-600');
+
+                // Actualizar contenido
+                tabContents.forEach(content => {
+                    if (content.id === `${tabId}-section`) {
+                        content.classList.add('active');
+                    } else {
+                        // Excepción: las sub-secciones de admin deben permanecer activas
+                        if (!content.closest('#admin-section')) {
+                             content.classList.remove('active');
+                        }
+                    }
+                });
+            });
+        });
+
+        // --- Formato de Moneda ---
+        const currencyFormatter = new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN'
+        });
+
+        // --- Funciones de PDF ---
+        function generateQuotePDF(quote) {
+            const doc = new jsPDF();
+            doc.setFontSize(18);
+            doc.text("Cotización", 10, 15);
+
+            doc.setFontSize(11);
+            doc.text(`Cliente: ${quote.clientName}`, 10, 25);
+            doc.text(`Email: ${quote.clientEmail}`, 10, 30);
+            doc.text(`Fecha: ${new Date(quote.createdAt.seconds * 1000).toLocaleDateString('es-ES')}`, 10, 35);
+            doc.text(`Cotización ID: ${quote.id.substring(0, 6)}...`, 10, 40);
+
+            doc.setFontSize(12);
+            doc.text("Detalles:", 10, 50);
+            
+            let y = 55;
+            let subtotal = 0;
+            quote.items.forEach(item => {
+                const itemTotal = item.clientPrice * item.quantity;
+                subtotal += itemTotal;
+                doc.setFontSize(10);
+                doc.text(`- ${item.quantity}x ${item.name}`, 15, y);
+                doc.text(`${currencyFormatter.format(item.clientPrice)} c/u`, 100, y);
+                doc.text(currencyFormatter.format(itemTotal), 150, y);
+                y += 7;
+            });
+
+            y += 5;
+            doc.text(`Subtotal: ${currencyFormatter.format(subtotal)}`, 120, y);
+            y += 7;
+            doc.text(`Envío (${quote.distance} km): ${currencyFormatter.format(quote.shippingCost)}`, 120, y);
+            y += 10;
+
+            doc.setFontSize(14);
+            doc.text(`Total: ${currencyFormatter.format(quote.total)}`, 120, y);
+
+            doc.save(`cotizacion-${quote.id.substring(0, 6)}.pdf`);
+        }
+
+        function generateOrderPDF(order) {
+            const doc = new jsPDF();
+            doc.setFontSize(18);
+            doc.text("Resumen de Pedido", 10, 15);
+
+            doc.setFontSize(11);
+            doc.text(`Cliente: ${order.clientName}`, 10, 25);
+            doc.text(`Fecha: ${new Date(order.createdAt.seconds * 1000).toLocaleDateString('es-ES')}`, 10, 30);
+            doc.text(`Pedido ID: ${order.id.substring(0, 6)}...`, 10, 35);
+
+            doc.setFontSize(12);
+            doc.text("Productos:", 10, 45);
+            
+            let y = 50;
+            order.items.forEach(item => {
+                doc.setFontSize(10);
+                doc.text(`- ${item.quantity}x ${item.name}`, 15, y);
+                y += 7;
+            });
+
+            y += 5;
+            doc.text(`Envío: ${currencyFormatter.format(order.shippingCost || 0)}`, 10, y);
+            y += 10;
+
+            doc.setFontSize(12);
+            doc.text(`Total del Pedido: ${currencyFormatter.format(order.total)}`, 120, y);
+            y += 7;
+            doc.text(`Total Pagado: ${currencyFormatter.format(order.totalPaid)}`, 120, y);
+            y += 10;
+            
+            doc.setFontSize(14);
+            doc.text(`Saldo Pendiente: ${currencyFormatter.format(order.total - order.totalPaid)}`, 120, y);
+
+            doc.save(`pedido-${order.id.substring(0, 6)}.pdf`);
+        }
+
+
+        // --- Lógica Principal de la App (se llama post-autenticación) ---
+        function initializeAppLogic() {
+            if (!userId) return;
+
+            // Formularios y botones
+            const productForm = document.getElementById('product-form');
+            const clientForm = document.getElementById('client-form');
+            const settingsForm = document.getElementById('settings-form');
+            const saveQuoteBtn = document.getElementById('save-quote-btn');
+            const saveQuoteForm = document.getElementById('save-quote-form');
+            const paymentForm = document.getElementById('payment-form');
+            const addToCartBtn = document.getElementById('add-to-cart-btn');
+
+            // Selects e Inputs
+            const quoteProductSelect = document.getElementById('quote-product');
+            const quoteQuantityInput = document.getElementById('quote-quantity');
+            const quoteDistanceInput = document.getElementById('quote-distance');
+            const productSearchInput = document.getElementById('product-search');
+
+            // Contenedores de listas
+            const orderListContainer = document.getElementById('order-list');
+            const quoteListContainer = document.getElementById('quote-list');
+            const productListContainer = document.getElementById('product-list');
+            const clientListContainer = document.getElementById('client-list');
+            const quoteCartList = document.getElementById('quote-cart-list');
+
+
+            // --- GESTIÓN DE AJUSTES (Settings) ---
+            // Ruta simplificada: ya no usa 'artifacts' ni 'appId'
+            const settingsDocRef = doc(db, 'users', userId, 'config', 'settings');
+            
+            onSnapshot(settingsDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    appSettings.costPerKm = data.costPerKm || 0;
+                    document.getElementById('settings-cost-km').value = appSettings.costPerKm;
+                    updateQuoteSummary(); 
+                } else {
+                    console.log("No hay documento de ajustes, usando valores por defecto.");
+                    appSettings.costPerKm = 0;
+                }
+            });
+
+            settingsForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const cost = parseFloat(document.getElementById('settings-cost-km').value) || 0;
+                try {
+                    await setDoc(settingsDocRef, { costPerKm: cost }, { merge: true });
+                    showAlert("Ajustes guardados con éxito.");
+                } catch (error) {
+                    console.error("Error al guardar ajustes:", error);
+                    showAlert("Error al guardar ajustes: " + error.message);
+                }
+            });
+
+
+            // --- GESTIÓN DE PRODUCTOS ---
+            // Ruta simplificada
+            const productCollectionRef = collection(db, 'users', userId, 'products');
+            onSnapshot(query(productCollectionRef), (snapshot) => {
+                const quoteProductSelect = document.getElementById('quote-product');
+                
+                allProducts = []; 
+                productListContainer.innerHTML = '';
+                quoteProductSelect.innerHTML = '<option value="">Seleccione un producto...</option>';
+
+                if (snapshot.empty) {
+                    productListContainer.innerHTML = '<p class="text-gray-500">No hay productos. Agrega uno para empezar.</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const product = { id: doc.id, ...doc.data() };
+                    allProducts.push(product); 
+                    const productCard = document.createElement('div');
+                    productCard.className = 'p-4 border border-gray-200 rounded-lg flex justify-between items-center';
+                    productCard.innerHTML = `
+                        <div class="flex-grow">
+                            <p class="font-semibold">${product.name}</p>
+                            <p class="text-sm text-gray-600">
+                                Costo: ${currencyFormatter.format(product.cost)} | Margen: ${product.markup}%
+                            </p>
+                            <span class="font-bold text-pink-600 text-sm">
+                                P. Cliente: ${currencyFormatter.format(product.cost * (1 + product.markup / 100))}
+                            </span>
+                        </div>
+                        <button data-product-id="${product.id}" class="delete-product-btn ml-4 flex-shrink-0 p-2 text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+                    `;
+                    productListContainer.appendChild(productCard);
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    quoteProductSelect.appendChild(option);
+                });
+            });
+
+            productForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('product-name').value;
+                const cost = parseFloat(document.getElementById('product-cost').value);
+                const markup = parseFloat(document.getElementById('product-markup').value);
+
+                if (!name || isNaN(cost) || isNaN(markup)) {
+                    showAlert("Por favor, completa todos los campos correctamente.");
+                    return;
+                }
+                try {
+                    await addDoc(productCollectionRef, { name, cost, markup });
+                    showAlert("Producto guardado con éxito.");
+                    productForm.reset();
+                } catch (error)
+ {
+                    console.error("Error al guardar producto:", error);
+                    showAlert("Error al guardar el producto: " + error.message);
+                }
+            });
+
+            // NUEVO: Búsqueda de Productos en Admin
+            productSearchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const cards = productListContainer.querySelectorAll('.p-4');
+                cards.forEach(card => {
+                    const productName = card.querySelector('.font-semibold').textContent.toLowerCase();
+                    if (productName.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+
+            // --- GESTIÓN DE CLIENTES ---
+            // Ruta simplificada
+            const clientCollectionRef = collection(db, 'users', userId, 'clients');
+            onSnapshot(query(clientCollectionRef), (snapshot) => {
+                const quoteClientSelect = document.getElementById('quote-client-select');
+
+                allClients = []; 
+                clientListContainer.innerHTML = '';
+                quoteClientSelect.innerHTML = '<option value="">Seleccione un cliente...</option>';
+
+                if (snapshot.empty) {
+                    clientListContainer.innerHTML = '<p class="text-gray-500">No hay clientes. Agrega uno para empezar.</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const client = { id: doc.id, ...doc.data() };
+                    allClients.push(client); 
+                    const clientCard = document.createElement('div');
+                    clientCard.className = 'p-4 border border-gray-200 rounded-lg flex justify-between items-center';
+                    clientCard.innerHTML = `
+                        <div class="flex-grow">
+                            <p class="font-semibold">${client.name}</p>
+                            <p class="text-sm text-gray-600">${client.email}</p>
+                        </div>
+                        <button data-client-id="${client.id}" class="delete-client-btn ml-4 flex-shrink-0 p-2 text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+                    `;
+                    clientListContainer.appendChild(clientCard);
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = client.name;
+                    quoteClientSelect.appendChild(option);
+                });
+            });
+
+            clientForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('client-name').value;
+                const email = document.getElementById('client-email').value;
+                if (!name || !email) {
+                    showAlert("Por favor, completa todos los campos.");
+                    return;
+                }
+                try {
+                    await addDoc(clientCollectionRef, { name, email });
+                    showAlert("Cliente guardado con éxito.");
+                    clientForm.reset();
+                } catch (error) {
+                    console.error("Error al guardar cliente:", error);
+                    showAlert("Error al guardar el cliente: " + error.message);
+                }
+            });
+
+            // --- LÓGICA DEL COTIZADOR (CARRITO) ---
+
+            // Renderizar los items del carrito
+            function renderQuoteCart() {
+                quoteCartList.innerHTML = '';
+                if (quoteCart.length === 0) {
+                    quoteCartList.innerHTML = '<p class="text-gray-500">El carrito está vacío.</p>';
+                    return;
+                }
+
+                quoteCart.forEach((item, index) => {
+                    const clientPrice = item.product.cost * (1 + item.product.markup / 100);
+                    const itemTotal = clientPrice * item.quantity;
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'flex justify-between items-center p-3 border border-gray-200 rounded-lg';
+                    itemElement.innerHTML = `
+                        <div>
+                            <p class="font-semibold">${item.product.name}</p>
+                            <p class="text-sm text-gray-600">
+                                ${item.quantity} x ${currencyFormatter.format(clientPrice)}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold">${currencyFormatter.format(itemTotal)}</p>
+                            <button data-index="${index}" class="remove-from-cart-btn text-red-500 text-sm hover:text-red-700">Eliminar</button>
+                        </div>
+                    `;
+                    quoteCartList.appendChild(itemElement);
+                });
+            }
+
+            // Actualizar el resumen total
+            function updateQuoteSummary() {
+                const distance = parseFloat(quoteDistanceInput.value) || 0;
+                let subtotal = 0;
+                
+                quoteCart.forEach(item => {
+                    const clientPrice = item.product.cost * (1 + item.product.markup / 100);
+                    subtotal += clientPrice * item.quantity;
+                });
+
+                const shippingCost = distance * appSettings.costPerKm;
+                const total = subtotal + shippingCost;
+
+                document.getElementById('quote-subtotal').textContent = currencyFormatter.format(subtotal);
+                document.getElementById('quote-shipping').textContent = currencyFormatter.format(shippingCost);
+                document.getElementById('quote-total').textContent = currencyFormatter.format(total);
+            }
+
+            // Agregar al carrito
+            addToCartBtn.addEventListener('click', () => {
+                const productId = quoteProductSelect.value;
+                const quantity = parseInt(quoteQuantityInput.value) || 1;
+
+                if (!productId) {
+                    showAlert("Por favor, seleccione un producto.");
+                    return;
+                }
+                if (quantity <= 0) {
+                    showAlert("La cantidad debe ser al menos 1.");
+                    return;
+                }
+                
+                const product = allProducts.find(p => p.id === productId);
+                if (!product) return;
+
+                const existingItem = quoteCart.find(item => item.product.id === productId);
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    quoteCart.push({ product: product, quantity: quantity });
+                }
+                
+                renderQuoteCart();
+                updateQuoteSummary();
+                // Resetear inputs de producto
+                quoteProductSelect.value = "";
+                quoteQuantityInput.value = 1;
+            });
+
+            // Eliminar del carrito (usando delegación de eventos)
+            quoteCartList.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-from-cart-btn')) {
+                    const index = parseInt(e.target.dataset.index);
+                    quoteCart.splice(index, 1);
+                    renderQuoteCart();
+                    updateQuoteSummary();
+                }
+            });
+
+            // Actualizar resumen si cambia la distancia
+            quoteDistanceInput.addEventListener('input', updateQuoteSummary);
+
+            // --- GESTIÓN DE COTIZACIONES ---
+            // Ruta simplificada
+            const quoteCollectionRef = collection(db, 'users', userId, 'quotes');
+
+            // Abrir modal para guardar cotización
+            saveQuoteBtn.addEventListener('click', () => {
+                if (quoteCart.length === 0) {
+                    showAlert("El carrito está vacío. Agregue productos para cotizar.");
+                    return;
+                }
+
+                // Calcular totales y guardarlos temporalmente
+                const distance = parseFloat(quoteDistanceInput.value) || 0;
+                let subtotal = 0;
+                const items = quoteCart.map(item => {
+                    const clientPrice = item.product.cost * (1 + item.product.markup / 100);
+                    subtotal += clientPrice * item.quantity;
+                    return {
+                        productId: item.product.id,
+                        name: item.product.name,
+                        cost: item.product.cost,
+                        markup: item.product.markup,
+                        clientPrice: clientPrice,
+                        quantity: item.quantity
+                    };
+                });
+                const shippingCost = distance * appSettings.costPerKm;
+                const total = subtotal + shippingCost;
+                
+                currentQuoteData = { items, total, distance, shippingCost }; // Guardar datos para el modal
+
+                document.getElementById('quote-modal-total').textContent = currencyFormatter.format(total);
+                showModal('save-quote-modal');
+            });
+
+            // Guardar Cotización (del carrito)
+            saveQuoteForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const clientId = document.getElementById('quote-client-select').value;
+                if (!clientId) {
+                    showAlert("Por favor, seleccione un cliente.");
+                    return;
+                }
+
+                const client = allClients.find(c => c.id === clientId);
+                if (!client) return;
+
+                const newQuote = {
+                    clientId: client.id,
+                    clientName: client.name,
+                    clientEmail: client.email,
+                    createdAt: serverTimestamp(),
+                    status: 'pending', 
+                    total: currentQuoteData.total,
+                    distance: currentQuoteData.distance,
+                    shippingCost: currentQuoteData.shippingCost,
+                    items: currentQuoteData.items // Array de items del carrito
+                };
+
+                try {
+                    await addDoc(quoteCollectionRef, newQuote);
+                    showAlert("Cotización guardada con éxito.");
+                    hideModal('save-quote-modal');
+                    saveQuoteForm.reset();
+                    
+                    // Resetear cotizador
+                    quoteCart = [];
+                    currentQuoteData = {};
+                    renderQuoteCart();
+                    quoteDistanceInput.value = 0;
+                    updateQuoteSummary();
+                    
+                    document.querySelector('button[data-tab="cotizaciones"]').click();
+                } catch (error) {
+                    console.error("Error al guardar cotización:", error);
+                    showAlert("Error al guardar la cotización: " + error.message);
+                }
+            });
+
+            // Cargar y mostrar cotizaciones guardadas
+            onSnapshot(query(quoteCollectionRef), (snapshot) => {
+                quoteListContainer.innerHTML = '';
+                allQuotes = [];
+                if (snapshot.empty) {
+                    quoteListContainer.innerHTML = '<p class="text-gray-500">No hay cotizaciones guardadas.</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const quote = { id: doc.id, ...doc.data() };
+                    allQuotes.push(quote); 
+                    const quoteCard = document.createElement('div');
+                    quoteCard.className = 'p-6 border border-gray-200 rounded-lg shadow-sm bg-white';
+                    const date = quote.createdAt ? new Date(quote.createdAt.seconds * 1000).toLocaleDateString('es-ES') : 'Fecha pendiente';
+
+                    let statusBadge = '';
+                    let actionButton = '';
+                    if (quote.status === 'pending') {
+                        statusBadge = `<span class="mt-2 inline-block bg-yellow-100 text-yellow-800 font-semibold py-1 px-3 rounded-full">Pendiente</span>`;
+                        actionButton = `<button class="convert-to-order-btn mt-2 w-full sm:w-auto bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
+                                            data-quote-id="${quote.id}">
+                                        Convertir a Pedido
+                                    </button>`;
+                    } else {
+                        statusBadge = `<span class="mt-2 inline-block bg-green-100 text-green-800 font-semibold py-1 px-3 rounded-full">Convertido a Pedido</span>`;
+                    }
+
+                    quoteCard.innerHTML = `
+                        <div class="md:flex justify-between items-start">
+                            <div>
+                                <h3 class="text-xl font-semibold text-pink-800">${quote.clientName}</h3>
+                                <p class="text-sm text-gray-500">Cotización #${quote.id.substring(0, 6)}... | ${date}</p>
+                                <ul class="mt-2 list-disc list-inside text-sm text-gray-700">
+                                    ${quote.items.map(item => `<li>${item.quantity}x ${item.name}</li>`).join('')}
+                                    ${quote.shippingCost > 0 ? `<li>Envío (${quote.distance} km): ${currencyFormatter.format(quote.shippingCost)}</li>` : ''}
+                                </ul>
+                            </div>
+                            <div class="mt-4 md:mt-0 md:text-right space-y-2">
+                                <p>
+                                    <span class="text-gray-600">Total Cotizado:</span> 
+                                    <span class="font-bold text-lg text-pink-700">${currencyFormatter.format(quote.total)}</span>
+                                </p>
+                                ${statusBadge}
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200 flex flex-col sm:flex-row gap-2">
+                            <button class="download-quote-pdf-btn w-full sm:w-auto bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors"
+                                    data-quote-id="${quote.id}">
+                                Descargar PDF
+                            </button>
+                            ${actionButton}
+                        </div>
+                    `;
+                    quoteListContainer.appendChild(quoteCard);
+                });
+            });
+
+            // --- GESTIÓN DE PEDIDOS ---
+            // Ruta simplificada
+            const orderCollectionRef = collection(db, 'users', userId, 'orders');
+
+            onSnapshot(query(orderCollectionRef), (snapshot) => {
+                orderListContainer.innerHTML = '';
+                allOrders = [];
+                if (snapshot.empty) {
+                    orderListContainer.innerHTML = '<p class="text-gray-500">No hay pedidos pendientes.</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const order = { id: doc.id, ...doc.data() };
+                    allOrders.push(order); 
+                    const balance = order.total - order.totalPaid;
+                    const date = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('es-ES') : 'Fecha pendiente';
+
+                    const orderCard = document.createElement('div');
+                    orderCard.className = 'p-6 border border-gray-200 rounded-lg shadow-sm bg-white';
+                    orderCard.innerHTML = `
+                        <div class="md:flex justify-between items-start">
+                            <div>
+                                <h3 class="text-xl font-semibold text-pink-800">${order.clientName}</h3>
+                                <p class="text-sm text-gray-500">Pedido #${order.id.substring(0, 6)}... | ${date}</p>
+                                <ul class="mt-2 list-disc list-inside text-sm text-gray-700">
+                                    ${order.items.map(item => `<li>${item.quantity}x ${item.name}</li>`).join('')}
+                                    ${order.shippingCost > 0 ? `<li>Envío: ${currencyFormatter.format(order.shippingCost)}</li>` : ''}
+                                </ul>
+                            </div>
+                            <div class="mt-4 md:mt-0 md:text-right space-y-2">
+                                <p>
+                                    <span class="text-gray-600">Total:</span> 
+                                    <span class="font-bold text-lg">${currencyFormatter.format(order.total)}</span>
+                                </p>
+                                <p>
+                                    <span class="text-gray-600">Pagado (Anticipo):</span> 
+                                    <span class="font-bold text-lg text-green-600">${currencyFormatter.format(order.totalPaid)}</span>
+                                </p>
+                                <p>
+                                    <span class="text-gray-600">Saldo Pendiente:</span> 
+                                    <span class="font-bold text-lg ${balance > 0 ? 'text-red-600' : 'text-green-600'}">
+                                        ${currencyFormatter.format(balance)}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200 flex flex-col sm:flex-row gap-2">
+                            <button class="download-order-pdf-btn w-full sm:w-auto bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors"
+                                    data-order-id="${order.id}">
+                                Descargar PDF
+                            </button>
+                            ${balance > 0 ? `
+                            <button class="add-payment-btn w-full sm:w-auto bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
+                                    data-order-id="${order.id}"
+                                    data-client-name="${order.clientName}"
+                                    data-balance="${balance}">
+                                Registrar Anticipo
+                            </button>
+                            ` : `
+                            <span class="mt-2 inline-block bg-green-100 text-green-800 font-semibold py-1 px-3 rounded-full">
+                                Pagado
+                            </span>
+                            `}
+                        </div>
+                    `;
+                    orderListContainer.appendChild(orderCard);
+                });
+            });
+
+            // --- Delegación de eventos para botones dinámicos ---
+
+            // Botones en lista de Cotizaciones
+            quoteListContainer.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('download-quote-pdf-btn')) {
+                    const quoteId = e.target.dataset.quoteId;
+                    const quote = allQuotes.find(q => q.id === quoteId);
+                    if (quote) {
+                        generateQuotePDF(quote);
+                    }
+                }
+                if (e.target.classList.contains('convert-to-order-btn')) {
+                    const quoteId = e.target.dataset.quoteId;
+                    const quote = allQuotes.find(q => q.id === quoteId);
+                    if (!quote) return;
+
+                    const newOrder = { ...quote, quoteId: quote.id, status: 'pending', totalPaid: 0, createdAt: serverTimestamp() };
+                    try {
+                        await addDoc(orderCollectionRef, newOrder);
+                        // Ruta simplificada
+                        const quoteDocRef = doc(db, 'users', userId, 'quotes', quoteId);
+                        await updateDoc(quoteDocRef, { status: 'converted' });
+                        showAlert("Cotización convertida a pedido con éxito.");
+                        document.querySelector('button[data-tab="pedidos"]').click();
+                    } catch (error) {
+                        console.error("Error al convertir a pedido:", error);
+                        showAlert("Error al convertir a pedido: " + error.message);
+                    }
+                }
+            });
+
+            // Botones en lista de Pedidos
+            orderListContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('download-order-pdf-btn')) {
+                    const orderId = e.target.dataset.orderId;
+                    const order = allOrders.find(o => o.id === orderId);
+                    if (order) {
+                        generateOrderPDF(order);
+                    }
+                }
+                if (e.target.classList.contains('add-payment-btn')) {
+                    const button = e.target;
+                    const orderId = button.dataset.orderId;
+                    const clientName = button.dataset.clientName;
+                    const balance = parseFloat(button.dataset.balance);
+                    document.getElementById('payment-order-id').value = orderId;
+                    document.getElementById('payment-modal-client').textContent = clientName;
+                    document.getElementById('payment-modal-balance').textContent = currencyFormatter.format(balance);
+                    document.getElementById('payment-amount').max = balance; 
+                    document.getElementById('payment-amount').value = '';
+                    document.getElementById('payment-note').value = '';
+                    showModal('payment-modal');
+                }
+            });
+
+            // Listeners de borrado en Panel Admin
+            productListContainer.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('delete-product-btn')) {
+                    const id = e.target.dataset.productId;
+                    // Reemplazar confirm() con un modal personalizado sería ideal
+                    if (confirm("¿Estás segura de que quieres borrar este producto? Esta acción no se puede deshacer.")) {
+                        try {
+                            // Ruta simplificada
+                            const docRef = doc(db, 'users', userId, 'products', id);
+                            await deleteDoc(docRef);
+                            showAlert("Producto eliminado.");
+                        } catch (error) {
+                            console.error("Error al borrar producto:", error);
+                            showAlert("Error al borrar producto: " + error.message);
+                        }
+                    }
+                }
+            });
+
+            clientListContainer.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('delete-client-btn')) {
+                    const id = e.target.dataset.clientId;
+                    if (confirm("¿Estás segura de que quieres borrar este cliente? Esta acción no se puede deshacer.")) {
+                        try {
+                            // TODO: Añadir lógica para verificar si el cliente tiene pedidos antes de borrar.
+                            // Ruta simplificada
+                            const docRef = doc(db, 'users', userId, 'clients', id);
+                            await deleteDoc(docRef);
+                            showAlert("Cliente eliminado.");
+                        } catch (error) {
+                            console.error("Error al borrar cliente:", error);
+                            showAlert("Error al borrar cliente: " + error.message);
+                        }
+                    }
+                }
+            });
+
+
+            // --- GESTIÓN DE PAGOS (ANTICIPOS) ---
+            // Ruta simplificada
+            const paymentCollectionRef = collection(db, 'users', userId, 'payments');
+
+            paymentForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const orderId = document.getElementById('payment-order-id').value;
+                const amount = parseFloat(document.getElementById('payment-amount').value);
+                const note = document.getElementById('payment-note').value;
+                const balance = parseFloat(document.getElementById('payment-amount').max);
+
+                if (!orderId || isNaN(amount) || amount <= 0) {
+                    showAlert("Por favor, ingrese un monto válido.");
+                    return;
+                }
+                if (amount > balance) {
+                    showAlert(`El monto no puede ser mayor al saldo pendiente de ${currencyFormatter.format(balance)}.`);
+                    return;
+                }
+                try {
+                    await addDoc(paymentCollectionRef, {
+                        orderId: orderId,
+                        amount: amount,
+                        note: note,
+                        paymentDate: serverTimestamp()
+                    });
+                    // Ruta simplificada
+                    const orderDocRef = doc(db, 'users', userId, 'orders', orderId);
+                    await updateDoc(orderDocRef, {
+                        totalPaid: increment(amount)
+                    });
+                    showAlert("¡Pago registrado con éxito!");
+                    hideModal('payment-modal');
+                    paymentForm.reset();
+                } catch (error) {
+                    console.error("Error al registrar pago:", error);
+                    showAlert("Error al registrar el pago: " + error.message);
+                }
+            });
+        }
+
+        // NO iniciar la app automáticamente. El login lo hará.
+        // El login ahora llama a signIn() cuando es exitoso.
+        // signIn();
+
+    </script>
+</body>
+</html>

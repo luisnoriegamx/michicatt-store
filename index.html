@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MichiCatt Store</title> <meta name="theme-color" content="#F472B6"/>
+    <title>MichiCatt Store</title> <!-- Se actualizará dinámicamente -->
+    
+    <!-- Meta tags para PWA -->
+    <meta name="theme-color" content="#F472B6"/>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,12 +14,19 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="MichiCatt Store">
 
+    <!-- Favicon para la pestaña del navegador -->
     <link rel="icon" href="https://placehold.co/192x192/F472B6/FFFFFF?text=MC-S&font=sans-serif" type="image/png">
     
+    <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de jsPDF para generar PDFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Carga de AutoTable para jsPDF (para tablas) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <!-- Carga de SheetJS (xlsx) para Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
+    <!-- Configuración de Tailwind y Estilos Personalizados -->
     <script>
         tailwind.config = {
             theme: {
@@ -86,8 +96,10 @@
 </head>
 <body class="bg-pink-bg text-pink-dark font-sans relative min-h-screen overflow-x-hidden">
 
+    <!-- Pantalla de Login -->
     <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-pink-primary p-4">
         <div class="bg-white w-full max-w-sm p-8 rounded-2xl shadow-2xl text-center">
+            <!-- Espacio para el Logo en Login -->
             <img id="logoImageLogin" src="" alt="Logo" class="max-h-20 mx-auto mb-4 hidden">
             
             <h1 class="text-3xl font-bold text-pink-secondary mb-2">MichiCatt Store</h1>
@@ -109,16 +121,20 @@
         </div>
     </div>
 
+    <!-- Contenido Principal de la App (Oculto por defecto) -->
     <div id="appContainer" class="hidden">
         
+        <!-- Cabecera -->
         <header class="bg-white shadow-md p-4 sticky top-0 z-40">
             <div class="container mx-auto flex justify-between items-center">
                 
+                <!-- Logo y Título -->
                 <div class="flex items-center gap-3">
                     <img id="logoImageHeader" src="" alt="Logo" class="max-h-10 hidden">
                     <h1 id="appNameTitle" class="text-xl sm:text-2xl font-bold text-pink-secondary">MichiCatt Store</h1>
                 </div>
 
+                <!-- Botón de Cerrar Sesión -->
                 <div class="flex items-center gap-4">
                     <span id="welcomeUser" class="text-sm text-pink-dark font-medium hidden sm:block"></span>
                     <button id="logoutButton" class="text-pink-dark/70 hover:text-pink-primary" title="Cerrar Sesión">
@@ -130,10 +146,14 @@
             </div>
         </header>
 
+        <!-- Navegación por Pestañas (¡NUEVO! Dashboard es el default) -->
         <nav class="bg-white shadow-sm sticky top-[68px] sm:top-[76px] z-30">
             <div class="container mx-auto px-4">
                 <div class="flex border-b border-pink-100 overflow-x-auto no-scrollbar">
-                    <button data-tab="cotizador" class="tab-button active-tab flex-shrink-0 text-pink-secondary border-b-2 border-pink-primary py-3 px-4 font-medium">
+                    <button data-tab="dashboard" class="tab-button active-tab flex-shrink-0 text-pink-secondary border-b-2 border-pink-primary py-3 px-4 font-medium">
+                        Dashboard
+                    </button>
+                    <button data-tab="cotizador" class="tab-button flex-shrink-0 text-pink-dark/70 hover:text-pink-primary py-3 px-4 font-medium">
                         Cotizador
                     </button>
                     <button data-tab="pedidos" class="tab-button flex-shrink-0 text-pink-dark/70 hover:text-pink-primary py-3 px-4 font-medium">
@@ -149,11 +169,54 @@
             </div>
         </nav>
 
+        <!-- Contenedor de Pestañas -->
         <main class="container mx-auto p-4 md:p-6">
             
-            <div id="cotizador" class="tab-content">
+            <!-- ¡NUEVO! Pestaña: Dashboard -->
+            <div id="dashboard" class="tab-content">
+                <h2 class="text-2xl font-bold text-pink-secondary mb-6">Resumen del Negocio</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Card: Ventas este Mes -->
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h3 class="text-sm font-medium text-pink-dark/70 uppercase">Ventas este Mes</h3>
+                        <p id="dashboardVentasMes" class="text-3xl font-bold text-pink-secondary mt-2">$0.00</p>
+                    </div>
+                    
+                    <!-- Card: Pedidos este Mes -->
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h3 class="text-sm font-medium text-pink-dark/70 uppercase">Pedidos este Mes</h3>
+                        <p id="dashboardPedidosMes" class="text-3xl font-bold text-pink-secondary mt-2">0</p>
+                    </div>
+
+                    <!-- Card: Total por Cobrar -->
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h3 class="text-sm font-medium text-pink-dark/70 uppercase">Total por Cobrar</h3>
+                        <p id="dashboardPorCobrar" class="text-3xl font-bold text-red-600 mt-2">$0.00</p>
+                    </div>
+                    
+                    <!-- Card: Pendientes de Entrega -->
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h3 class="text-sm font-medium text-pink-dark/70 uppercase">Pendientes de Entrega</h3>
+                        <p id="dashboardPendientesEntrega" class="text-3xl font-bold text-blue-600 mt-2">0</p>
+                    </div>
+                </div>
+                
+                <!-- Próximos 5 Pedidos a Entregar -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg mt-6">
+                    <h3 class="text-xl font-bold text-pink-secondary mb-4">Próximas Entregas</h3>
+                    <div id="dashboardProximasEntregas" class="space-y-3">
+                        <p id="noProximasEntregas" class="text-pink-dark/60">No hay entregas pendientes.</p>
+                        <!-- Items se cargarán aquí -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña: Cotizador (¡MODIFICADA!) -->
+            <div id="cotizador" class="tab-content hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     
+                    <!-- Columna 1: Mi Catálogo -->
                     <div class="bg-white p-6 rounded-2xl shadow-lg">
                         <h2 class="text-2xl font-bold text-pink-secondary mb-4">Mi Catálogo</h2>
                         <input type="text" id="quoteProductSearch" class="w-full px-4 py-2 border border-pink-light rounded-lg mb-4" placeholder="Buscar producto...">
@@ -162,25 +225,37 @@
                         </div>
                     </div>
 
+                    <!-- Columna 2: Nuevo Pedido -->
                     <div class="bg-white p-6 rounded-2xl shadow-lg space-y-4">
                         <h2 class="text-2xl font-bold text-pink-secondary">Nuevo Pedido</h2>
                         
+                        <!-- Formulario de Pedido -->
                         <form id="newOrderForm">
                             <div>
                                 <label for="orderClientName" class="block text-sm font-medium text-pink-dark mb-1">Nombre del Cliente (Manual)</label>
                                 <input type="text" id="orderClientName" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" required>
                             </div>
-                            <div>
-                                <label for="orderKm" class="block text-sm font-medium text-pink-dark mb-1">Envío (Kilómetros)</label>
-                                <input type="number" id="orderKm" value="0" min="0" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" required>
+                            
+                            <!-- ¡NUEVO! Fecha de Entrega -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="orderKm" class="block text-sm font-medium text-pink-dark mb-1">Envío (Kilómetros)</label>
+                                    <input type="number" id="orderKm" value="0" min="0" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" required>
+                                </div>
+                                <div>
+                                    <label for="orderDeliveryDate" class="block text-sm font-medium text-pink-dark mb-1">Fecha de Entrega</label>
+                                    <input type="date" id="orderDeliveryDate" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" required>
+                                </div>
                             </div>
                         </form>
                         
+                        <!-- Carrito de Pedido -->
                         <h3 class="text-lg font-semibold text-pink-dark pt-2">Carrito de Pedido</h3>
                         <div id="orderCartItems" class="mb-4 max-h-60 overflow-y-auto pr-2 space-y-2">
                             <p id="emptyCart" class="text-pink-dark/60">Agrega productos desde el catálogo.</p>
                         </div>
                         
+                        <!-- Resumen de Costos -->
                         <div class="bg-pink-bg p-4 rounded-lg space-y-2">
                             <h4 class="text-lg font-bold text-pink-dark">Resumen del Pedido</h4>
                             <div class="flex justify-between">
@@ -197,6 +272,7 @@
                             </div>
                         </div>
                         
+                        <!-- Botones de Acción -->
                         <div class="flex gap-4">
                             <button type="button" id="clearOrderBtn" class="w-1/2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300">
                                 Limpiar
@@ -209,13 +285,23 @@
                 </div>
             </div>
 
+            <!-- Pestaña: Pedidos Guardados -->
             <div id="pedidos" class="tab-content hidden">
-                <h2 class="text-2xl font-bold text-pink-secondary mb-6">Pedidos Guardados</h2>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-pink-secondary">Pedidos Guardados</h2>
+                    <button id="exportExcelBtn" class="bg-green-600 text-white py-2 px-4 rounded-lg font-semibold shadow-lg hover:bg-green-700 transition-all duration-300 btn-pulse text-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Exportar a Excel
+                    </button>
+                </div>
                 <div id="ordersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <p id="noOrders" class="col-span-full text-pink-dark/60">No hay pedidos guardados.</p>
                 </div>
             </div>
 
+            <!-- Pestaña: Productos -->
             <div id="productos" class="tab-content hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
@@ -260,6 +346,7 @@
             </div>
 
             
+            <!-- Pestaña: Configuración -->
             <div id="config" class="tab-content hidden">
                 <div class="max-w-2xl mx-auto space-y-6">
                     <div class="bg-white p-6 rounded-2xl shadow-lg">
@@ -270,17 +357,14 @@
                                 <label for="storeName" class="block text-sm font-medium text-pink-dark mb-1">Nombre de la Tienda</label>
                                 <input type="text" id="storeName" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
                             </div>
-
                             <div>
                                 <label for="logoUrl" class="block text-sm font-medium text-pink-dark mb-1">URL del Logo de la Tienda</label>
                                 <input type="url" id="logoUrl" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" placeholder="https://ejemplo.com/logo.png">
                             </div>
-
                             <div>
                                 <label for="shippingCost" class="block text-sm font-medium text-pink-dark mb-1">Costo de Envío por KM</label>
                                 <input type="number" id="shippingCost" min="0" step="0.01" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
                             </div>
-
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label for="folioPrefix" class="block text-sm font-medium text-pink-dark mb-1">Prefijo de Folio</label>
@@ -312,10 +396,12 @@
         </main>
     </div>
 
+    <!-- Notificación Toast -->
     <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-xl opacity-0 transform translate-y-10 transition-all duration-500 z-50">
         ¡Guardado correctamente!
     </div>
 
+    <!-- Modal para Gestionar Pagos y Envíos (¡MODIFICADO!) -->
     <div id="manageOrderModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 opacity-0 pointer-events-none">
         <div class="bg-white w-full max-w-lg p-6 rounded-2xl shadow-2xl space-y-4" id="modalContent">
             <div class="flex justify-between items-center">
@@ -323,8 +409,15 @@
                 <button id="closeModalBtn" class="text-pink-dark/70 hover:text-pink-primary text-3xl font-bold">&times;</button>
             </div>
             
-            <input type="hidden" id="modalOrderId"> <div class="space-y-4">
+            <input type="hidden" id="modalOrderId"> <!-- Guarda el ID del pedido -->
+            
+            <!-- ¡NUEVO! Fecha de Entrega -->
+            <p class="text-sm font-medium text-pink-dark">Fecha de Entrega: <strong id="modalDeliveryDate" class="text-pink-secondary"></strong></p>
+            
+            <!-- Sección de Pagos -->
+            <div class="space-y-4">
                 <h3 class="text-lg font-semibold text-pink-dark">Gestión de Pagos</h3>
+                <!-- Resumen Financiero -->
                 <div class="grid grid-cols-3 gap-2 text-center">
                     <div>
                         <span class="text-xs text-pink-dark/70">TOTAL</span>
@@ -340,6 +433,7 @@
                     </div>
                 </div>
                 
+                <!-- Formulario de Abono -->
                 <div class="space-y-2">
                     <label for="addPaymentAmount" class="text-sm font-medium text-pink-dark">Añadir Abono:</label>
                     <div class="flex gap-2">
@@ -348,6 +442,7 @@
                     </div>
                 </div>
                 
+                <!-- Historial de Pagos -->
                 <div>
                     <h4 class="text-sm font-medium text-pink-dark mb-2">Historial de Pagos:</h4>
                     <div id="paymentHistoryList" class="max-h-24 overflow-y-auto bg-pink-bg p-2 rounded-lg space-y-1">
@@ -356,6 +451,7 @@
                 </div>
             </div>
             
+            <!-- Sección de Entrega -->
             <div class="pt-4 border-t border-pink-100">
                 <h3 class="text-lg font-semibold text-pink-dark mb-2">Gestión de Entrega</h3>
                 <div class="flex justify-between items-center">
@@ -371,6 +467,7 @@
     </div>
 
 
+    <!-- Script de Registro de PWA -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -385,6 +482,11 @@
         }
     </script>
 
+    <!-- ================================================================== -->
+    <!-- Carga de Firebase y Lógica de la App -->
+    <!-- ================================================================== -->
+    
+    <!-- Importar Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
@@ -482,6 +584,7 @@
 
         // Inputs Formulario Pedido
         const orderKmInput = document.getElementById('orderKm');
+        const orderDeliveryDateInput = document.getElementById('orderDeliveryDate'); // ¡NUEVO!
         
         // Inputs de Configuración
         const shippingCostInput = document.getElementById('shippingCost');
@@ -497,6 +600,7 @@
         const closeModalBtn = document.getElementById('closeModalBtn');
         const modalOrderId = document.getElementById('modalOrderId');
         const modalFolio = document.getElementById('modalFolio');
+        const modalDeliveryDate = document.getElementById('modalDeliveryDate'); // ¡NUEVO!
         const modalTotal = document.getElementById('modalTotal');
         const modalPagado = document.getElementById('modalPagado');
         const modalSaldo = document.getElementById('modalSaldo');
@@ -506,6 +610,17 @@
         const noPayments = document.getElementById('noPayments');
         const modalDeliveryStatus = document.getElementById('modalDeliveryStatus');
         const toggleDeliveryBtn = document.getElementById('toggleDeliveryBtn');
+
+        // Botón de Exportar
+        const exportExcelBtn = document.getElementById('exportExcelBtn');
+        
+        // ¡NUEVO! Elementos del Dashboard
+        const dashboardVentasMes = document.getElementById('dashboardVentasMes');
+        const dashboardPedidosMes = document.getElementById('dashboardPedidosMes');
+        const dashboardPorCobrar = document.getElementById('dashboardPorCobrar');
+        const dashboardPendientesEntrega = document.getElementById('dashboardPendientesEntrega');
+        const dashboardProximasEntregas = document.getElementById('dashboardProximasEntregas');
+        const noProximasEntregas = document.getElementById('noProximasEntregas');
 
 
         // Estado de la App
@@ -668,6 +783,20 @@
                 currency: 'MXN',
             });
         };
+
+        // ¡NUEVO! Helper para formatear fechas de input 'date'
+        // Previene el error de "un día antes" por zonas horarias
+        function formatInputDate(dateString) {
+            if (!dateString) return 'N/D';
+            // Asume que la fecha (ej. 2025-11-14) está en zona horaria local
+            // y la formatea. 'T00:00:00-06:00' (o similar) es clave.
+            const date = new Date(dateString + 'T00:00:00-06:00'); // Ajusta -06:00 a tu zona
+            return date.toLocaleDateString('es-MX', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
         
         // ------------------------------------------------------------------
         // Listeners de Eventos (Solo se registran una vez)
@@ -686,6 +815,7 @@
             clearOrderBtn.addEventListener('click', handleClearOrderClick); 
             saveSettingsBtn.addEventListener('click', onSaveSettings); 
             productEditCancelBtn.addEventListener('click', cancelProductEdit); 
+            exportExcelBtn.addEventListener('click', exportAllOrdersToExcel); 
             
             // Búsqueda
             adminProductSearch.addEventListener('input', renderAdminProductsList);
@@ -758,11 +888,12 @@
                         orderItems.push(renderOrderCard(order));
                     });
                     ordersList.innerHTML = orderItems.sort((a, b) => {
-                        const orderA = ordersData.find(o => o.id === a.match(/data-id="([^"]+)"/)[1]);
-                        const orderB = ordersData.find(o => o.id === b.match(/data-id="([^"]+)"/)[1]);
-                        return (orderB.createdAt?.seconds || 0) - (orderA.createdAt?.seconds || 0);
+                        return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
                     }).join('');
                 }
+                
+                // ¡NUEVO! Actualizar el Dashboard cada vez que cambian los pedidos
+                updateDashboard(ordersData);
             });
             
             // Listener de Configuración
@@ -1104,6 +1235,7 @@
             editingOrderId = null; 
             document.getElementById('orderClientName').value = '';
             document.getElementById('orderKm').value = 0;
+            orderDeliveryDateInput.value = ''; // ¡NUEVO! Limpiar fecha
             renderOrderCart();
             updateOrderSummary();
             
@@ -1132,6 +1264,13 @@
                 showToast("Escribe el nombre del cliente", true);
                 return;
             }
+            
+            // ¡NUEVO! Validar fecha de entrega
+            const deliveryDate = orderDeliveryDateInput.value;
+            if (!deliveryDate) {
+                showToast("Selecciona una fecha de entrega", true);
+                return;
+            }
 
             const summary = updateOrderSummary();
             
@@ -1139,6 +1278,7 @@
                 clientName: clientName,
                 items: orderCart,
                 ...summary, // total, subtotal, shipping, distance
+                deliveryDate: deliveryDate // ¡NUEVO! Guardar fecha
             };
 
             try {
@@ -1160,8 +1300,8 @@
                         saldoPendiente: newSaldo,
                         statusPago: newStatusPago,
                         statusEntrega: currentOrder.statusEntrega,
-                        folio: currentOrder.folio, // Mantener folio original
-                        createdAt: currentOrder.createdAt // Mantener fecha original
+                        folio: currentOrder.folio, 
+                        createdAt: currentOrder.createdAt 
                     };
                     
                     await setDoc(doc(db, 'orders', editingOrderId), updatedOrderData);
@@ -1206,6 +1346,7 @@
             editingOrderId = orderId;
             document.getElementById('orderClientName').value = order.clientName;
             document.getElementById('orderKm').value = order.distance;
+            orderDeliveryDateInput.value = order.deliveryDate || ''; // ¡NUEVO! Cargar fecha
             orderCart = JSON.parse(JSON.stringify(order.items)); 
             
             renderOrderCart();
@@ -1230,6 +1371,9 @@
 
         function renderOrderCard(order) {
             const date = order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString('es-MX') : 'Fecha N/D';
+            
+            // ¡NUEVO! Formatear fecha de entrega
+            const deliveryDate = order.deliveryDate ? formatInputDate(order.deliveryDate) : 'N/D';
             
             // --- Lógica de Badges de Estado ---
             let paymentStatusTag = '';
@@ -1260,19 +1404,27 @@
                         <h3 class="font-bold text-lg text-pink-secondary">${order.clientName}</h3>
                         <span class="text-xs font-mono bg-pink-light text-pink-dark px-2 py-1 rounded-full">${order.folio || 'SIN-FOLIO'}</span>
                     </div>
-                    <p class="text-sm text-pink-dark/60 mb-3">${date}</p>
+                    <p class="text-sm text-pink-dark/60 mb-2">${date}</p>
                     
+                    <!-- ¡NUEVO! Fecha de Entrega -->
+                    <p class="text-sm font-medium text-pink-dark mb-3">
+                        Entrega: <strong class="text-pink-secondary">${deliveryDate}</strong>
+                    </p>
+                    
+                    <!-- Estados -->
                     <div class="flex gap-2 mb-3">
                         ${paymentStatusTag}
                         ${deliveryStatusTag}
                     </div>
                     
+                    <!-- Resumen Financiero -->
                     <div class="mt-4 pt-4 border-t border-pink-100 space-y-1">
                         <p class="flex justify-between text-sm"><span>Total:</span> <span class="font-medium">${formatCurrency(order.total)}</span></p>
                         <p class="flex justify-between text-sm text-green-600"><span>Pagado:</span> <span class="font-medium">${formatCurrency(order.pagado)}</span></p>
                         <p class="flex justify-between text-base font-bold text-red-600"><span>Saldo:</span> <span>${formatCurrency(order.saldoPendiente)}</span></p>
                     </div>
 
+                    <!-- Botones de Acción (4 botones) -->
                     <div class="mt-6 grid grid-cols-4 gap-2">
                         <button class="manage-order w-full text-xs bg-green-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-green-600 transition-all" title="Gestionar Pagos/Envío">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto pointer-events-none" viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.151-.102.331-.16.533-.16s.382.058.533.16l3.867 2.6c.294.198.467.538.467.91s-.173.712-.467.91l-3.867 2.6c-.151.102-.331.16-.533-.16s-.382-.058-.533-.16L4.567 11.84c-.294-.198-.467-.538-.467-.91s.173-.712.467-.91l3.867-2.6zM12 6c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm-4 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zM8 14c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm4 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zM4 6c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z" /></svg>
@@ -1292,7 +1444,7 @@
         }
         
         // ------------------------------------------------------------------
-        // Lógica de Generación de PDF
+        // Lógica de Generación de PDF (¡MODIFICADA!)
         // ------------------------------------------------------------------
         
         function getBasePDF(title) {
@@ -1328,10 +1480,18 @@
             doc.setFontSize(12);
             doc.setFont("helvetica", "normal");
             
+            // --- Información del Cliente ---
             doc.setFont("helvetica", "bold");
             doc.text("Cliente:", 20, 45);
             doc.setFont("helvetica", "normal");
-            doc.text(order.clientName, 40, 45);
+            doc.text(order.clientName, 55, 45);
+            
+            // ¡NUEVO! Fecha de Entrega
+            doc.setFont("helvetica", "bold");
+            doc.text("Fecha de Entrega:", 20, 52);
+            doc.setFont("helvetica", "normal");
+            doc.text(formatInputDate(order.deliveryDate), 55, 52);
+            // --- Fin Info Cliente ---
             
             const tableColumn = ["Cant.", "Producto", "Precio Unit.", "Total"];
             const tableRows = order.items.map(item => [
@@ -1413,13 +1573,14 @@
         }
         
         // ------------------------------------------------------------------
-        // ¡NUEVA! Lógica de la Modal de Gestión de Pedidos
+        // Lógica de la Modal de Gestión de Pedidos
         // ------------------------------------------------------------------
         
         function openManageModal(order) {
             // 1. Poblar datos
             modalOrderId.value = order.id;
             modalFolio.textContent = order.folio;
+            modalDeliveryDate.textContent = formatInputDate(order.deliveryDate); // ¡NUEVO!
             modalTotal.textContent = formatCurrency(order.total);
             modalPagado.textContent = formatCurrency(order.pagado);
             modalSaldo.textContent = formatCurrency(order.saldoPendiente);
@@ -1431,8 +1592,10 @@
                 paymentHistoryList.appendChild(noPayments);
             } else {
                 noPayments.classList.add('hidden');
-                paymentHistoryList.innerHTML = order.historialPagos.map(pago => {
-                    const date = pago.fecha?.toDate ? pago.fecha.toDate().toLocaleString('es-MX') : 'Fecha N/D';
+                const historialOrdenado = order.historialPagos.sort((a,b) => (a.fecha?.seconds || 0) - (b.fecha?.seconds || 0));
+                
+                paymentHistoryList.innerHTML = historialOrdenado.map(pago => {
+                    const date = pago.fecha?.toDate ? pago.fecha.toDate().toLocaleString('es-MX') : new Date(pago.fecha).toLocaleString('es-MX');
                     return `<div class="text-sm flex justify-between"><span>${date}</span><span class="font-medium">${formatCurrency(pago.monto)}</span></div>`;
                 }).join('');
             }
@@ -1469,7 +1632,6 @@
                 return;
             }
             
-            // Obtener el pedido actual
             const orderRef = doc(db, 'orders', id);
             const docSnap = await getDoc(orderRef);
             if (!docSnap.exists()) {
@@ -1479,10 +1641,9 @@
             
             const order = docSnap.data();
             
-            // Calcular nuevos totales
             const nuevoPagado = (order.pagado || 0) + montoAbono;
             const nuevoSaldo = order.total - nuevoPagado;
-            const nuevoStatusPago = nuevoSaldo <= 0.01 ? 'Liquidado' : 'Abonado'; // 0.01 para errores de decimales
+            const nuevoStatusPago = nuevoSaldo <= 0.01 ? 'Liquidado' : 'Abonado';
             
             if (nuevoSaldo < -0.01) {
                 showToast("El monto del abono excede el saldo pendiente.", true);
@@ -1490,7 +1651,7 @@
             }
             
             const nuevoPago = {
-                fecha: new Date(), // ¡CORREGIDO! Usar new Date() en lugar de serverTimestamp()
+                fecha: new Date(), // Usar new Date() en lugar de serverTimestamp()
                 monto: montoAbono
             };
             
@@ -1499,15 +1660,14 @@
                     pagado: nuevoPagado,
                     saldoPendiente: nuevoSaldo,
                     statusPago: nuevoStatusPago,
-                    historialPagos: arrayUnion(nuevoPago) // Agrega al array
+                    historialPagos: arrayUnion(nuevoPago) 
                 }, { merge: true });
                 
                 showToast("¡Pago registrado!");
-                addPaymentAmount.value = ''; // Limpiar
+                addPaymentAmount.value = ''; 
                 
-                // Actualizar la modal (el listener de onSnapshot lo hará, pero forzamos)
                 const updatedOrder = {...order, id: id, pagado: nuevoPagado, saldoPendiente: nuevoSaldo, statusPago: nuevoStatusPago, historialPagos: [...(order.historialPagos || []), nuevoPago]};
-                openManageModal(updatedOrder); // Re-abrir modal con datos frescos
+                openManageModal(updatedOrder); 
                 
             } catch (error) {
                 console.error("Error al registrar pago:", error);
@@ -1532,13 +1692,175 @@
                 await setDoc(orderRef, { statusEntrega: newStatus }, { merge: true });
                 showToast(`Estado actualizado a: ${newStatus}`);
                 
-                // Actualizar modal
                 const updatedOrder = {...docSnap.data(), statusEntrega: newStatus, id: id};
                 openManageModal(updatedOrder);
                 
             } catch (error) {
                 console.error("Error al actualizar entrega:", error);
                 showToast("Error al actualizar entrega", true);
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // ¡NUEVA! Lógica de Exportar a Excel
+        // ------------------------------------------------------------------
+        function exportAllOrdersToExcel() {
+            if (ordersData.length === 0) {
+                showToast("No hay pedidos para exportar", true);
+                return;
+            }
+
+            console.log("Exportando pedidos...", ordersData);
+            
+            const reportData = [];
+            
+            const sortedOrders = [...ordersData].sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            for (const order of sortedOrders) {
+                const orderDate = order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString('es-MX') : 'N/D';
+                const deliveryDate = order.deliveryDate ? formatInputDate(order.deliveryDate) : 'N/D';
+                
+                if (order.items && order.items.length > 0) {
+                    for (const item of order.items) {
+                        reportData.push({
+                            "Folio": order.folio || 'N/A',
+                            "Fecha Pedido": orderDate,
+                            "Fecha Entrega": deliveryDate, // ¡NUEVO!
+                            "Cliente": order.clientName,
+                            "Estado Pago": order.statusPago,
+                            "Estado Entrega": order.statusEntrega,
+                            "Producto": item.name,
+                            "Cantidad": item.quantity,
+                            "Precio Unitario": item.price,
+                            "Total Producto": item.price * item.quantity,
+                            "Subtotal Pedido": order.subtotal,
+                            "Envío": order.shipping,
+                            "Total Pedido": order.total,
+                            "Pagado": order.pagado,
+                            "Saldo Pendiente": order.saldoPendiente
+                        });
+                    }
+                } else {
+                    reportData.push({
+                        "Folio": order.folio || 'N/A',
+                        "Fecha Pedido": orderDate,
+                        "Fecha Entrega": deliveryDate, // ¡NUEVO!
+                        "Cliente": order.clientName,
+                        "Estado Pago": order.statusPago,
+                        "Estado Entrega": order.statusEntrega,
+                        "Producto": "N/A",
+                        "Cantidad": 0,
+                        "Precio Unitario": 0,
+                        "Total Producto": 0,
+                        "Subtotal Pedido": order.subtotal,
+                        "Envío": order.shipping,
+                        "Total Pedido": order.total,
+                        "Pagado": order.pagado,
+                        "Saldo Pendiente": order.saldoPendiente
+                    });
+                }
+            }
+
+            try {
+                const ws = XLSX.utils.json_to_sheet(reportData);
+                
+                // Dar formato de moneda a las columnas
+                // 'H' (Precio Unit), 'I' (Total Prod), 'J' (Subtotal), 'K' (Envío), 'L' (Total), 'M' (Pagado), 'N' (Saldo)
+                const currencyFormat = '"$"#,##0.00';
+                const numberFormat = '0';
+                
+                // Aplicar formato a columnas (esto es un poco más avanzado)
+                Object.keys(ws).forEach(cell => {
+                    if (cell.match(/^[H-N]/) && !cell.match(/^[A-Z]1$/)) { // Columnas H a N, excepto la fila 1 (cabecera)
+                        ws[cell].z = currencyFormat;
+                    }
+                    if (cell.match(/^G/) && !cell.match(/^[A-Z]1$/)) { // Columna G (Cantidad)
+                        ws[cell].z = numberFormat;
+                    }
+                });
+                
+                // Ajustar ancho de columnas
+                ws['!cols'] = [
+                    { wch: 10 }, // Folio
+                    { wch: 12 }, // Fecha Pedido
+                    { wch: 18 }, // Fecha Entrega
+                    { wch: 25 }, // Cliente
+                    { wch: 12 }, // Estado Pago
+                    { wch: 12 }, // Estado Entrega
+                    { wch: 30 }, // Producto
+                    { wch: 8 },  // Cantidad
+                    { wch: 15 }, // Precio Unit.
+                    { wch: 15 }, // Total Prod.
+                    { wch: 15 }, // Subtotal
+                    { wch: 12 }, // Envío
+                    { wch: 15 }, // Total Pedido
+                    { wch: 15 }, // Pagado
+                    { wch: 15 }  // Saldo
+                ];
+                
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Pedidos");
+
+                const today = new Date().toLocaleDateString('es-MX').replace(/\//g, '-');
+                XLSX.writeFile(wb, `Reporte_Pedidos_MichiCatt_Store_${today}.xlsx`);
+
+            } catch (error) {
+                console.error("Error al generar Excel:", error);
+                showToast("Error al generar el archivo Excel", true);
+            }
+        }
+        
+        // ------------------------------------------------------------------
+        // ¡NUEVA! Lógica del Dashboard
+        // ------------------------------------------------------------------
+        function updateDashboard(currentOrders) {
+            const now = new Date();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            
+            // 1. Filtrar pedidos creados este mes
+            const ordersThisMonth = currentOrders.filter(o => o.createdAt?.toDate() >= startOfMonth);
+            
+            // 2. Calcular Ventas del Mes (Suma del total de pedidos creados este mes)
+            const ventasMes = ordersThisMonth.reduce((acc, o) => acc + o.total, 0);
+            
+            // 3. Calcular Pedidos del Mes (Conteo)
+            const numPedidosMes = ordersThisMonth.length;
+            
+            // 4. Calcular Total por Cobrar (Suma de *todos* los saldos pendientes)
+            const porCobrar = currentOrders.reduce((acc, o) => acc + (o.saldoPendiente || 0), 0);
+            
+            // 5. Calcular Pendientes de Entrega (Conteo de *todos* los pendientes)
+            const pendientesEntrega = currentOrders.filter(o => o.statusEntrega === 'Pendiente');
+            
+            // 6. Actualizar las tarjetas del UI
+            dashboardVentasMes.textContent = formatCurrency(ventasMes);
+            dashboardPedidosMes.textContent = numPedidosMes;
+            dashboardPorCobrar.textContent = formatCurrency(porCobrar);
+            dashboardPendientesEntrega.textContent = pendientesEntrega.length;
+            
+            // 7. Actualizar lista de próximas entregas
+            if (pendientesEntrega.length === 0) {
+                noProximasEntregas.classList.remove('hidden');
+                dashboardProximasEntregas.innerHTML = '';
+                dashboardProximasEntregas.appendChild(noProximasEntregas);
+            } else {
+                noProximasEntregas.classList.add('hidden');
+                // Ordenar por fecha de entrega más próxima y tomar 5
+                dashboardProximasEntregas.innerHTML = pendientesEntrega
+                    .sort((a, b) => new Date(a.deliveryDate) - new Date(b.deliveryDate))
+                    .slice(0, 5)
+                    .map(order => {
+                        const deliveryDate = formatInputDate(order.deliveryDate);
+                        return `
+                            <div class="flex justify-between items-center py-2 border-b border-pink-100">
+                                <div>
+                                    <p class="font-medium text-pink-dark">${order.clientName}</p>
+                                    <p class="text-sm text-pink-dark/70">Folio: ${order.folio}</p>
+                                </div>
+                                <span class="text-sm font-semibold text-pink-secondary">${deliveryDate}</span>
+                            </div>
+                        `;
+                    }).join('');
             }
         }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MichiCatt Store</title>
+    <title>MichiCatt Store</title> <!-- Se actualizará dinámicamente -->
     <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Carga de jsPDF para generar PDFs -->
@@ -105,7 +105,8 @@
         <!-- Cabecera -->
         <header class="bg-white shadow-md p-4 sticky top-0 z-40">
             <div class="container mx-auto flex justify-between items-center">
-                <h1 class="text-xl sm:text-2xl font-bold text-pink-secondary">MichiCatt Store</h1>
+                <!-- El ID appNameTitle permite que se actualice dinámicamente -->
+                <h1 id="appNameTitle" class="text-xl sm:text-2xl font-bold text-pink-secondary">MichiCatt Store</h1>
                 <span id="welcomeUser" class="text-sm text-pink-dark font-medium"></span>
             </div>
         </header>
@@ -122,6 +123,10 @@
                     </button>
                     <button data-tab="pedidos" class="tab-button flex-shrink-0 text-pink-dark/70 hover:text-pink-primary py-3 px-4 font-medium">
                         Pedidos Guardados
+                    </button>
+                    <!-- ¡NUEVA PESTAÑA DE CONFIGURACIÓN! -->
+                    <button data-tab="config" class="tab-button flex-shrink-0 text-pink-dark/70 hover:text-pink-primary py-3 px-4 font-medium">
+                        Configuración
                     </button>
                 </div>
             </div>
@@ -251,6 +256,65 @@
                 </div>
             </div>
             
+            <!-- Pestaña: Configuración (¡NUEVA!) -->
+            <div id="config" class="tab-content hidden">
+                <div class="max-w-md mx-auto">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <h2 class="text-2xl font-bold text-pink-secondary mb-6">Configuración</h2>
+                        
+                        <div class="space-y-4">
+                            <!-- ¡NUEVO! Nombre de la Tienda -->
+                            <div>
+                                <label for="storeName" class="block text-sm font-medium text-pink-dark mb-1">Nombre de la Tienda</label>
+                                <input type="text" id="storeName" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
+                            </div>
+
+                            <div>
+                                <label for="shippingCost" class="block text-sm font-medium text-pink-dark mb-1">Costo de Envío por KM</label>
+                                <input type="number" id="shippingCost" min="0" step="0.01" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
+                            </div>
+
+                            <!-- ¡NUEVO! Configuración de Folios -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="folioPrefix" class="block text-sm font-medium text-pink-dark mb-1">Prefijo de Folio</label>
+                                    <input type="text" id="folioPrefix" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" placeholder="MC-S-">
+                                </div>
+                                <div>
+                                    <label for="nextFolio" class="block text-sm font-medium text-pink-dark mb-1">Próximo Folio (N°)</label>
+                                    <input type="number" id="nextFolio" min="1" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" placeholder="1">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="saveSettingsBtn" class="mt-6 w-full bg-pink-primary text-white py-2 px-4 rounded-lg font-semibold shadow-lg hover:bg-pink-secondary transition-all duration-300 btn-pulse">
+                            Guardar Ajustes
+                        </button>
+
+                        <!-- ¡NUEVO! Gestión de Administradores -->
+                        <div class="mt-8 pt-6 border-t border-pink-100">
+                             <h3 class="text-lg font-semibold text-pink-dark mb-4">Gestión de Logins de Admin</h3>
+                             <p class="text-sm text-pink-dark/70 mb-4">
+                                 Aquí puedes gestionar los usuarios y contraseñas (simulados) que pueden acceder a esta app.
+                             </p>
+                             
+                             <!-- Formulario para agregar admin -->
+                             <form id="addAdminForm" class="flex gap-2 mb-4">
+                                 <input type="text" id="adminUser" class="w-full px-3 py-2 border border-pink-light rounded-lg text-sm" placeholder="Nuevo Usuario" required>
+                                 <input type="password" id="adminPass" class="w-full px-3 py-2 border border-pink-light rounded-lg text-sm" placeholder="Contraseña" required>
+                                 <button type="submit" class="flex-shrink-0 bg-green-500 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-green-600">+</button>
+                             </form>
+                             
+                             <!-- Lista de admins -->
+                             <div id="adminUsersList" class="space-y-2 max-h-40 overflow-y-auto pr-2">
+                                 <!-- Admins se cargarán aquí -->
+                                 <p id="noAdmins" class="text-pink-dark/60">No hay admins configurados.</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </main>
     </div>
 
@@ -352,54 +416,82 @@
 
         // Inputs Formulario Pedido
         const orderKmInput = document.getElementById('orderKm');
+        
+        // ¡NUEVO! Inputs de Configuración
+        const shippingCostInput = document.getElementById('shippingCost');
+        const storeNameInput = document.getElementById('storeName');
+        const folioPrefixInput = document.getElementById('folioPrefix');
+        const nextFolioInput = document.getElementById('nextFolio');
+        const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        
+        // ¡NUEVO! Inputs de Admin
+        const addAdminForm = document.getElementById('addAdminForm');
+        const adminUsersList = document.getElementById('adminUsersList');
+        const noAdmins = document.getElementById('noAdmins');
 
         // Estado de la App
         let userId = null;
-        const COSTO_POR_KM = 23.99 / 7; // $3.427...
+        // Objeto de configuración (se carga desde Firebase)
+        let appSettings = {
+            storeName: 'MichiCatt Store',
+            shippingCost: 23.99 / 7, // $3.427...
+            folioPrefix: 'MC-S-',
+            nextFolio: 1
+        };
         let productsData = []; // Caché local de productos
         let orderCart = []; // Carrito de pedido
+        let editingOrderId = null; // ¡NUEVO! Para saber si estamos editando
+        let adminUsers = []; // ¡NUEVO! Caché local de admins
+        let ordersData = []; // ¡NUEVO! Caché local de pedidos
 
         // Referencias a Colecciones de Firestore
         let productCollectionRef;
         let ordersCollectionRef;
+        let settingsDocRef; 
+        let adminCollectionRef; // ¡NUEVO!
 
         // ------------------------------------------------------------------
-        // Lógica de Autenticación y Login
+        // Lógica de Autenticación y Login (¡MODIFICADO!)
         // ------------------------------------------------------------------
 
-        // Observador de estado de autenticación
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                console.log("Usuario autenticado anónimamente:", user.uid);
-            } else {
-                console.log("Usuario no autenticado.");
+        // PASO 1: Iniciar sesión anónimamente EN CUANTO CARGA LA PÁGINA
+        // Esto ocurre *antes* de que el usuario vea el login simulado.
+        (async () => {
+            try {
+                const userCredential = await signInAnonymously(auth);
+                const uid = userCredential.user.uid;
+                
+                if (uid) {
+                    console.log("Conectado anónimamente con UID:", uid);
+                    // Iniciar listeners de datos INCLUSO si el login simulado no ha pasado
+                    initializeAppLocal(uid);
+                } else {
+                    loginError.textContent = "Error de autenticación anónima.";
+                    loginError.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Error al iniciar sesión anónimo en Firebase:", error);
+                loginError.textContent = "Error de conexión con Firebase.";
+                loginError.classList.remove('hidden');
             }
-        });
+        })();
 
-        // Login Falso (Simulado)
+
+        // PASO 2: El login Falso (Simulado)
+        // Ahora comprueba contra la lista 'adminUsers' cargada desde Firebase
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
 
-            if (user === 'Michicatt' && pass === 'Strawberry') {
-                try {
-                    // Autenticar anónimamente en Firebase
-                    const userCredential = await signInAnonymously(auth);
-                    
-                    // Mostrar App y ocultar Login
-                    welcomeUser.textContent = `¡Hola, ${user}!`;
-                    loginScreen.classList.add('hidden');
-                    appContainer.classList.remove('hidden');
+            // Buscar al usuario en la lista cargada
+            const foundUser = adminUsers.find(admin => admin.id === user && admin.pass === pass);
 
-                    // Iniciar la aplicación
-                    initializeAppLocal(userCredential.user.uid); 
-
-                } catch (error) {
-                    console.error("Error al iniciar sesión anónimo en Firebase:", error);
-                    loginError.textContent = "Error de conexión con Firebase.";
-                    loginError.classList.remove('hidden');
-                }
+            if (foundUser) {
+                // ¡Éxito! Mostrar App y ocultar Login
+                welcomeUser.textContent = `¡Hola, ${user}!`;
+                loginScreen.classList.add('hidden');
+                appContainer.classList.remove('hidden');
             } else {
                 loginError.textContent = "Usuario o contraseña incorrectos.";
                 loginError.classList.remove('hidden');
@@ -431,6 +523,8 @@
             // Rutas privadas del usuario
             productCollectionRef = collection(db, 'users', userId, 'products');
             ordersCollectionRef = collection(db, 'users', userId, 'orders');
+            settingsDocRef = doc(db, 'users', userId, 'config', 'main');
+            adminCollectionRef = collection(db, 'users', userId, 'admins'); // ¡CORREGIDO!
         }
         
         // ------------------------------------------------------------------
@@ -496,7 +590,11 @@
             
             // Botones
             saveOrderBtn.addEventListener('click', onSaveOrder);
-            clearOrderBtn.addEventListener('click', clearOrder);
+            clearOrderBtn.addEventListener('click', handleClearOrderClick);
+            saveSettingsBtn.addEventListener('click', onSaveSettings); 
+            
+            // ¡NUEVO! Formulario de Admin
+            addAdminForm.addEventListener('submit', onSaveAdminUser);
 
             // Búsqueda
             adminProductSearch.addEventListener('input', renderAdminProductsList);
@@ -557,7 +655,55 @@
                         const order = { ...doc.data(), id: doc.id };
                         orderItems.push(renderOrderCard(order));
                     });
+                    // ¡NUEVO! Guardar caché local de pedidos
+                    ordersData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
                     ordersList.innerHTML = orderItems.join('');
+                }
+            });
+            
+            // ¡MODIFICADO! Listener de Configuración
+            onSnapshot(settingsDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    // Cargar configuración de Firebase
+                    appSettings = { ...appSettings, ...docSnap.data() }; 
+                } else {
+                    // Si no existe, creamos el documento con los valores por defecto
+                    setDoc(settingsDocRef, appSettings).catch(e => console.error("Error creating default settings:", e));
+                }
+                // Actualizar los inputs y UI
+                shippingCostInput.value = appSettings.shippingCost.toFixed(4);
+                storeNameInput.value = appSettings.storeName;
+                folioPrefixInput.value = appSettings.folioPrefix;
+                nextFolioInput.value = appSettings.nextFolio;
+                
+                // Actualizar UI
+                document.title = appSettings.storeName;
+                document.getElementById('appNameTitle').textContent = appSettings.storeName;
+                
+                // Actualizar cálculo de envío por si cambió
+                updateOrderSummary();
+            });
+            
+            // ¡NUEVO! Listener de Administradores
+            onSnapshot(query(adminCollectionRef), (snapshot) => {
+                adminUsers = []; // Limpiar caché
+                if (snapshot.empty) {
+                    // Si no hay NINGÚN admin, crear el de por defecto
+                    const defaultUser = "Michicatt";
+                    const defaultPass = "Strawberry";
+                    setDoc(doc(db, 'users', userId, 'admins', defaultUser), { pass: defaultPass })
+                        .catch(e => console.error("Error creating default admin:", e));
+                    noAdmins.classList.remove('hidden');
+                    adminUsersList.innerHTML = '';
+                    // No agregamos a 'adminUsers' aquí, esperamos al siguiente snapshot
+                } else {
+                    noAdmins.classList.add('hidden');
+                    const adminItems = [];
+                    snapshot.forEach(doc => {
+                        adminUsers.push({ id: doc.id, ...doc.data() }); // Cargar al caché
+                        adminItems.push(renderAdminUser(doc.id));
+                    });
+                    adminUsersList.innerHTML = adminItems.join('');
                 }
             });
         }
@@ -578,43 +724,52 @@
                 return;
             }
 
-            // Quitar item del carrito (¡NUEVO!)
-            if (e.target.classList.contains('remove-cart-item')) {
-                const item = e.target.closest('div[data-index]');
-                if (item) {
-                    const index = parseInt(item.dataset.index); 
-                    orderCart.splice(index, 1);
-                    renderOrderCart();
-                    updateOrderSummary();
-                }
-                return;
-            }
-
-            // Borrar producto (Admin)
-            if (e.target.classList.contains('delete-product')) {
+            // ¡NUEVO! Borrar admin
+            if (e.target.classList.contains('delete-admin')) {
                 const item = e.target.closest('div[data-id]');
                 const id = item.dataset.id;
-                if (confirm("¿Estás segura de que quieres borrar este producto?")) {
-                    try {
-                        await deleteDoc(doc(db, 'users', userId, 'products', id));
-                        showToast("Producto eliminado");
-                    } catch (error) {
-                        console.error("Error al borrar producto:", error);
-                        showToast("Error al borrar producto", true);
-                    }
+                if (adminUsers.length <= 1) {
+                    showToast("No puedes borrar al último administrador", true);
+                    return;
+                }
+                if (confirm(`¿Estás segura de borrar al admin "${id}"?`)) {
+                    deleteDoc(doc(db, 'users', userId, 'admins', id))
+                        .then(() => showToast("Admin eliminado"))
+                        .catch(e => showToast("Error al borrar", true));
                 }
                 return;
             }
 
-            // Acciones de Pedido (PDF)
+            // Acciones de Pedido (PDF, ¡MODIFICADO!)
             const orderCard = e.target.closest('#ordersList div[data-id]');
             if (orderCard) {
                 const orderId = orderCard.dataset.id;
+                
+                // Botón de PDF
                 if (e.target.classList.contains('download-order-pdf')) {
                     try {
-                        const docSnap = await getDoc(doc(db, 'users', userId, 'orders', orderId));
-                        if (docSnap.exists()) generateOrderPDF(docSnap.data());
-                    } catch (error) { showToast("Error al generar PDF", true); }
+                        const order = ordersData.find(o => o.id === orderId); // Usar caché local
+                        if (order) {
+                            generateOrderPDF(order);
+                        }
+                    } catch (error) { 
+                        console.error("Error al generar PDF:", error);
+                        showToast("Error al generar PDF", true); 
+                    }
+                }
+                
+                // ¡NUEVO! Botón de Eliminar Pedido
+                if (e.target.classList.contains('delete-order')) {
+                    if (confirm("¿Estás segura de borrar este pedido? No se puede deshacer.")) {
+                        deleteDoc(doc(db, 'users', userId, 'orders', orderId))
+                            .then(() => showToast("Pedido eliminado"))
+                            .catch(e => showToast("Error al eliminar", true));
+                    }
+                }
+                
+                // ¡NUEVO! Botón de Editar Pedido
+                if (e.target.classList.contains('edit-order')) {
+                    loadOrderForEditing(orderId);
                 }
                 return;
             }
@@ -781,7 +936,8 @@
             const distance = parseFloat(orderKmInput.value) || 0;
             
             const subtotal = orderCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            const shipping = distance * COSTO_POR_KM;
+            // ¡CORREGIDO! Usar appSettings.shippingCost en lugar de la variable antigua
+            const shipping = distance * appSettings.shippingCost;
             const total = subtotal + shipping;
 
             document.getElementById('orderSubtotal').textContent = formatCurrency(subtotal);
@@ -792,14 +948,27 @@
         }
 
         // --- Limpiar Pedido ---
-        function clearOrder() {
-            if (!confirm("¿Estás segura de limpiar este pedido?")) return;
+        // ¡FUNCIÓN REFACTORIZADA! (¡CORRECCIÓN DE BUG!)
+        
+        // 1. La función que SÍ limpia (sin preguntar)
+        function clearOrderForm() {
             orderCart = [];
-            newOrderForm.reset();
+            editingOrderId = null; // ¡IMPORTANTE! Resetear modo edición
+            // newOrderForm.reset(); // Esto da problemas, mejor manual
             document.getElementById('orderClientName').value = '';
             document.getElementById('orderKm').value = 0;
             renderOrderCart();
             updateOrderSummary();
+            // Cambiar texto del botón a "Guardar"
+            saveOrderBtn.textContent = "Guardar Pedido";
+            saveOrderBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+            saveOrderBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+        }
+        
+        // 2. El manejador del botón, que SÍ pregunta
+        function handleClearOrderClick() {
+            if (!confirm("¿Estás segura de limpiar este pedido?")) return;
+            clearOrderForm();
         }
 
         // --- Guardar Pedido ---
@@ -817,22 +986,77 @@
             }
 
             const summary = updateOrderSummary();
+            
+            const orderData = {
+                clientName: clientName,
+                items: orderCart,
+                ...summary,
+            };
 
             try {
-                await addDoc(ordersCollectionRef, {
-                    clientName: clientName,
-                    items: orderCart,
-                    ...summary,
-                    createdAt: serverTimestamp(),
-                });
+                if (editingOrderId) {
+                    // --- MODO ACTUALIZACIÓN ---
+                    // No actualizamos la fecha ni el folio, solo los datos
+                    await setDoc(doc(db, 'users', userId, 'orders', editingOrderId), orderData, { merge: true });
+                    showToast("Pedido actualizado");
+                } else {
+                    // --- MODO CREACIÓN (NUEVO PEDIDO) ---
+                    // Generar folio
+                    const folioString = appSettings.folioPrefix + String(appSettings.nextFolio).padStart(4, '0');
+                    orderData.folio = folioString;
+                    orderData.createdAt = serverTimestamp();
+                    
+                    await addDoc(ordersCollectionRef, orderData);
+                    
+                    // Incrementar el folio en la config
+                    const newNextFolio = appSettings.nextFolio + 1;
+                    await setDoc(settingsDocRef, { nextFolio: newNextFolio }, { merge: true });
+                    // appSettings.nextFolio se actualizará solo gracias al listener
+                    
+                    showToast("Pedido guardado");
+                }
                 
-                showToast("Pedido guardado");
-                clearOrder(); // Limpiar formulario
+                clearOrderForm(); // Limpiar formulario (esto también resetea editingOrderId)
 
             } catch (error) {
                 console.error("Error al guardar pedido:", error);
                 showToast("Error al guardar pedido", true);
             }
+        }
+        
+        // --- ¡NUEVO! Cargar Pedido para Editar ---
+        function loadOrderForEditing(orderId) {
+            const order = ordersData.find(o => o.id === orderId);
+            if (!order) {
+                showToast("No se encontró el pedido", true);
+                return;
+            }
+            
+            // 1. Poner datos en el formulario
+            editingOrderId = order.id;
+            document.getElementById('orderClientName').value = order.clientName;
+            document.getElementById('orderKm').value = order.distance;
+            orderCart = JSON.parse(JSON.stringify(order.items)); // Copia profunda
+            
+            // 2. Actualizar UI del carrito
+            renderOrderCart();
+            updateOrderSummary();
+            
+            // 3. Cambiar botón a modo "Actualizar"
+            saveOrderBtn.textContent = "Actualizar Pedido";
+            saveOrderBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            saveOrderBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+            
+            // 4. Cambiar a la pestaña del cotizador
+            // Simulamos clic en la pestaña
+            tabs.forEach(tab => {
+                if (tab.dataset.tab === 'cotizador') {
+                    tab.click();
+                }
+            });
+            
+            // 5. Scroll al inicio
+            window.scrollTo(0, 0);
         }
         
         // ------------------------------------------------------------------
@@ -848,7 +1072,11 @@
 
             return `
                 <div class="bg-white p-5 rounded-2xl shadow-lg" data-id="${order.id}">
-                    <h3 class="font-bold text-lg text-pink-secondary">${order.clientName}</h3>
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-bold text-lg text-pink-secondary">${order.clientName}</h3>
+                        <!-- ¡NUEVO! Folio -->
+                        <span class="text-xs font-mono bg-pink-light text-pink-dark px-2 py-1 rounded-full">${order.folio || 'SIN-FOLIO'}</span>
+                    </div>
                     <p class="text-sm text-pink-dark/60 mb-3">ID: ${order.id.substring(0, 6)} | ${date}</p>
                     
                     <ul class="list-disc list-inside space-y-1 my-3 pl-1">${itemsHtml}</ul>
@@ -859,9 +1087,16 @@
                         <p class="flex justify-between text-base font-bold text-pink-secondary"><span>Total:</span> <span>${formatCurrency(order.total)}</span></p>
                     </div>
 
-                    <div class="mt-6">
-                        <button class="download-order-pdf w-full text-sm bg-blue-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-blue-600 transition-all duration-300">
-                            Descargar PDF
+                    <!-- ¡NUEVO! Botones de Acción -->
+                    <div class="mt-6 grid grid-cols-3 gap-2">
+                        <button class="download-order-pdf w-full text-xs bg-blue-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-blue-600 transition-all">
+                            PDF
+                        </button>
+                        <button class="edit-order w-full text-xs bg-yellow-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-yellow-600 transition-all">
+                            Editar
+                        </button>
+                        <button class="delete-order w-full text-xs bg-red-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-red-600 transition-all">
+                            Eliminar
                         </button>
                     </div>
                 </div>
@@ -873,9 +1108,11 @@
         // ------------------------------------------------------------------
         
         // Cargar jsPDF globalmente
-        const { jsPDF } = window.jspdf;
+        // const { jsPDF } = window.jspdf; // ¡BUG! Movido para corregir error de carga
         
         function getBasePDF(title) {
+            // ¡CORRECCIÓN DE BUG! Se inicializa aquí para asegurar que la librería esté cargada
+            const { jsPDF } = window.jspdf; 
             const doc = new jsPDF();
             doc.setFont("helvetica", "normal");
             
@@ -896,6 +1133,7 @@
         }
 
         // --- Generar PDF de Pedido ---
+        // --- Generar PDF de Pedido ---
         function generateOrderPDF(order) {
             const doc = getBasePDF("Resumen de Pedido");
             const date = order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString('es-MX') : 'Fecha N/A';
@@ -903,11 +1141,11 @@
             doc.setFontSize(10);
             doc.text(`ID: ${order.id}`, 190, 26, { align: 'right' });
             doc.text(`Fecha: ${date}`, 190, 31, { align: 'right' });
+            doc.setFont("helvetica", "bold");
+            doc.text(`Folio: ${order.folio || 'N/A'}`, 190, 36, { align: 'right' }); // ¡NUEVO! Folio en PDF
 
             doc.setFontSize(12);
-            doc.text("Cliente:", 20, 45);
-            doc.setFont("helvetica", "bold");
-            doc.text(order.clientName, 20, 52);
+            doc.setFont("helvetica", "normal");
             
             const tableColumn = ["Cant.", "Producto", "Precio Unit.", "Total"];
             const tableRows = order.items.map(item => [
@@ -935,6 +1173,75 @@
             doc.text(formatCurrency(order.total), 190, finalY + 24, { align: 'right' });
 
             doc.save(`Pedido_${order.clientName}_${order.id.substring(0,6)}.pdf`);
+        }
+
+        // ¡NUEVA FUNCIÓN! Guardar Ajustes de Configuración
+        async function onSaveSettings(e) {
+            e.preventDefault();
+            // Recolectar todos los nuevos datos
+            const newCost = parseFloat(shippingCostInput.value);
+            const newName = storeNameInput.value.trim();
+            const newPrefix = folioPrefixInput.value;
+            const newNextFolio = parseInt(nextFolioInput.value);
+            
+            if (isNaN(newCost) || newCost < 0) {
+                showToast("El costo por KM debe ser un número positivo", true); return;
+            }
+            if (!newName) {
+                showToast("El nombre de la tienda no puede estar vacío", true); return;
+            }
+            if (isNaN(newNextFolio) || newNextFolio < 1) {
+                showToast("El próximo folio debe ser un número mayor a 0", true); return;
+            }
+
+            const newSettings = {
+                shippingCost: newCost,
+                storeName: newName,
+                folioPrefix: newPrefix,
+                nextFolio: newNextFolio
+            };
+
+            try {
+                // Usamos setDoc para sobreescribir (o crear)
+                await setDoc(settingsDocRef, newSettings);
+                appSettings = newSettings; // Actualiza el estado local
+                showToast("Ajustes guardados");
+            } catch (error) {
+                console.error("Error al guardar ajustes:", error);
+                showToast("Error al guardar ajustes", true);
+            }
+        }
+        
+        // ¡NUEVA FUNCIÓN! Renderizar item de admin
+        function renderAdminUser(username) {
+            return `
+                <div class="flex justify-between items-center bg-pink-bg p-2 rounded-lg" data-id="${username}">
+                    <span class="text-sm font-medium text-pink-dark">${username}</span>
+                    <button class="delete-admin text-red-400 hover:text-red-600 font-bold text-lg">&times;</button>
+                </div>
+            `;
+        }
+        
+        // ¡NUEVA FUNCIÓN! Guardar Admin User
+        async function onSaveAdminUser(e) {
+            e.preventDefault();
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+            
+            if (!user || !pass) {
+                showToast("Usuario y contraseña no pueden estar vacíos", true);
+                return;
+            }
+            
+            try {
+                // Usamos el 'user' como ID del documento
+                await setDoc(doc(db, 'users', userId, 'admins', user), { pass });
+                showToast("Administrador guardado");
+                addAdminForm.reset();
+            } catch (error) {
+                console.error("Error al guardar admin:", error);
+                showToast("Error al guardar admin", true);
+            }
         }
 
     </script>

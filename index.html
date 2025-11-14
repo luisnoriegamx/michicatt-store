@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MichiCatt Store</title> <!-- Se actualizará dinámicamente -->
     
-    <!-- ¡NUEVO! Meta tags para PWA -->
+    <!-- Meta tags para PWA -->
     <meta name="theme-color" content="#F472B6"/>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
@@ -89,17 +89,15 @@
     <!-- Pantalla de Login -->
     <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-pink-primary p-4">
         <div class="bg-white w-full max-w-sm p-8 rounded-2xl shadow-2xl text-center">
-            <!-- ¡NUEVO! Espacio para el Logo en Login -->
+            <!-- Espacio para el Logo en Login -->
             <img id="logoImageLogin" src="" alt="Logo" class="max-h-20 mx-auto mb-4 hidden">
             
             <h1 class="text-3xl font-bold text-pink-secondary mb-2">MichiCatt Store</h1>
             <p class="text-pink-dark mb-6">Panel de Administración</p>
-            <p class="text-pink-dark mb-6">V.1.0.</p>
-
             <form id="loginForm">
                 <div class="mb-4 text-left">
-                    <label for="username" class="block text-sm font-medium text-pink-dark mb-1">Usuario</label>
-                    <input type="text" id="username" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary focus:border-transparent outline-none" required>
+                    <label for="email" class="block text-sm font-medium text-pink-dark mb-1">Email</label>
+                    <input type="email" id="email" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary focus:border-transparent outline-none" required>
                 </div>
                 <div class="mb-6 text-left">
                     <label for="password" class="block text-sm font-medium text-pink-dark mb-1">Contraseña</label>
@@ -120,13 +118,13 @@
         <header class="bg-white shadow-md p-4 sticky top-0 z-40">
             <div class="container mx-auto flex justify-between items-center">
                 
-                <!-- ¡NUEVO! Logo y Título -->
+                <!-- Logo y Título -->
                 <div class="flex items-center gap-3">
                     <img id="logoImageHeader" src="" alt="Logo" class="max-h-10 hidden">
                     <h1 id="appNameTitle" class="text-xl sm:text-2xl font-bold text-pink-secondary">MichiCatt Store</h1>
                 </div>
 
-                <!-- ¡NUEVO! Botón de Cerrar Sesión -->
+                <!-- Botón de Cerrar Sesión -->
                 <div class="flex items-center gap-4">
                     <span id="welcomeUser" class="text-sm text-pink-dark font-medium hidden sm:block"></span>
                     <button id="logoutButton" class="text-pink-dark/70 hover:text-pink-primary" title="Cerrar Sesión">
@@ -138,20 +136,19 @@
             </div>
         </header>
 
-        <!-- Navegación por Pestañas (¡SIMPLIFICADA!) -->
+        <!-- Navegación por Pestañas -->
         <nav class="bg-white shadow-sm sticky top-[68px] sm:top-[76px] z-30">
             <div class="container mx-auto px-4">
                 <div class="flex border-b border-pink-100 overflow-x-auto no-scrollbar">
                     <button data-tab="cotizador" class="tab-button active-tab flex-shrink-0 text-pink-secondary border-b-2 border-pink-primary py-3 px-4 font-medium">
                         Cotizador
                     </button>
-                    <button data-tab="productos" class="tab-button flex-shrink-0 text-pink-dark/70 hover:text-pink-primary py-3 px-4 font-medium">
-                        Productos
-                    </button>
                     <button data-tab="pedidos" class="tab-button flex-shrink-0 text-pink-dark/70 hover:text-pink-primary py-3 px-4 font-medium">
                         Pedidos Guardados
                     </button>
-                    <!-- ¡NUEVA PESTAÑA DE CONFIGURACIÓN! -->
+                    <button data-tab="productos" class="tab-button flex-shrink-0 text-pink-dark/70 hover:text-pink-primary py-3 px-4 font-medium">
+                        Productos
+                    </button>
                     <button data-tab="config" class="tab-button flex-shrink-0 text-pink-dark/70 hover:text-pink-primary py-3 px-4 font-medium">
                         Configuración
                     </button>
@@ -162,7 +159,7 @@
         <!-- Contenedor de Pestañas -->
         <main class="container mx-auto p-4 md:p-6">
             
-            <!-- Pestaña: Cotizador (¡NUEVA!) -->
+            <!-- Pestaña: Cotizador -->
             <div id="cotizador" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     
@@ -229,11 +226,20 @@
                 </div>
             </div>
 
-            <!-- Pestaña: Productos (¡NUEVA!) -->
+            <!-- Pestaña: Pedidos Guardados -->
+            <div id="pedidos" class="tab-content hidden">
+                <h2 class="text-2xl font-bold text-pink-secondary mb-6">Pedidos Guardados</h2>
+                <div id="ordersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Los pedidos guardados se cargarán aquí -->
+                    <p id="noOrders" class="col-span-full text-pink-dark/60">No hay pedidos guardados.</p>
+                </div>
+            </div>
+
+            <!-- Pestaña: Productos -->
             <div id="productos" class="tab-content hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
-                    <!-- Columna 1: Agregar Producto (¡NUEVO!) -->
+                    <!-- Columna 1: Agregar/Editar Producto -->
                     <div class="lg:col-span-1 space-y-6">
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
                             <h2 class="text-2xl font-bold text-pink-secondary mb-6">Agregar Producto</h2>
@@ -258,7 +264,7 @@
                                 <button type="submit" id="saveProductBtn" class="w-full bg-pink-primary text-white py-2 px-4 rounded-lg font-semibold shadow-lg hover:bg-pink-secondary transition-all duration-300 btn-pulse">
                                     Guardar Producto
                                 </button>
-                                <!-- ¡NUEVO! Botón de Cancelar Edición -->
+                                <!-- Botón de Cancelar Edición -->
                                 <button type="button" id="productEditCancelBtn" class="w-full mt-2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300 hidden">
                                     Cancelar Edición
                                 </button>
@@ -278,29 +284,21 @@
                 </div>
             </div>
 
-            <!-- Pestaña: Pedidos Guardados (¡NUEVA!) -->
-            <div id="pedidos" class="tab-content hidden">
-                <h2 class="text-2xl font-bold text-pink-secondary mb-6">Pedidos Guardados</h2>
-                <div id="ordersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Los pedidos guardados se cargarán aquí -->
-                    <p id="noOrders" class="col-span-full text-pink-dark/60">No hay pedidos guardados.</p>
-                </div>
-            </div>
             
-            <!-- Pestaña: Configuración (¡NUEVA!) -->
+            <!-- Pestaña: Configuración -->
             <div id="config" class="tab-content hidden">
-                <div class="max-w-md mx-auto">
+                <div class="max-w-2xl mx-auto space-y-6">
                     <div class="bg-white p-6 rounded-2xl shadow-lg">
-                        <h2 class="text-2xl font-bold text-pink-secondary mb-6">Configuración</h2>
+                        <h2 class="text-2xl font-bold text-pink-secondary mb-6">Configuración General</h2>
                         
                         <div class="space-y-4">
-                            <!-- ¡NUEVO! Nombre de la Tienda -->
+                            <!-- Nombre de la Tienda -->
                             <div>
                                 <label for="storeName" class="block text-sm font-medium text-pink-dark mb-1">Nombre de la Tienda</label>
                                 <input type="text" id="storeName" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
                             </div>
 
-                            <!-- ¡NUEVO! URL del Logo -->
+                            <!-- URL del Logo -->
                             <div>
                                 <label for="logoUrl" class="block text-sm font-medium text-pink-dark mb-1">URL del Logo de la Tienda</label>
                                 <input type="url" id="logoUrl" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" placeholder="https://ejemplo.com/logo.png">
@@ -311,7 +309,7 @@
                                 <input type="number" id="shippingCost" min="0" step="0.01" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
                             </div>
 
-                            <!-- ¡NUEVO! Configuración de Folios -->
+                            <!-- Configuración de Folios -->
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label for="folioPrefix" class="block text-sm font-medium text-pink-dark mb-1">Prefijo de Folio</label>
@@ -327,43 +325,11 @@
                         <button type="button" id="saveSettingsBtn" class="mt-6 w-full bg-pink-primary text-white py-2 px-4 rounded-lg font-semibold shadow-lg hover:bg-pink-secondary transition-all duration-300 btn-pulse">
                             Guardar Ajustes
                         </button>
-
-                        <!-- ¡NUEVO! Gestión de Administradores -->
-                        <div class="mt-8 pt-6 border-t border-pink-100">
-                             <h3 class="text-lg font-semibold text-pink-dark mb-4">Gestión de Logins de Admin</h3>
-                             <p class="text-sm text-pink-dark/70 mb-4">
-                                 Aquí puedes gestionar los usuarios y contraseñas (simulados) que pueden acceder a esta app.
-                             </p>
-                             
-                             <!-- Formulario para agregar admin -->
-                             <form id="addAdminForm" class="flex gap-2 mb-4">
-                                 <input type="text" id="adminUser" class="w-full px-3 py-2 border border-pink-light rounded-lg text-sm" placeholder="Nuevo Usuario" required>
-                                 <input type="password" id="adminPass" class="w-full px-3 py-2 border border-pink-light rounded-lg text-sm" placeholder="Contraseña" required>
-                                 <button type="submit" class="flex-shrink-0 bg-green-500 text-white px-3 py-2 rounded-lg font-semibold text-sm hover:bg-green-600">+</button>
-                             </form>
-                             
-                             <!-- Lista de admins -->
-                             <div id="adminUsersList" class="space-y-2 max-h-40 overflow-y-auto pr-2">
-                                 <!-- Admins se cargarán aquí -->
-                                 <p id="noAdmins" class="text-pink-dark/60">No hay admins configurados.</p>
-                             </div>
-                        </div>
-
-                        <!-- ¡NUEVO! Cambiar Contraseña -->
-                        <div class="mt-8 pt-6 border-t border-pink-100">
-                            <h3 class="text-lg font-semibold text-pink-dark mb-4">Cambiar Mi Contraseña</h3>
-                            <p class="text-sm text-pink-dark/70 mb-4">
-                                Estás logueada como: <strong id="loggedInAsUser">...</strong>
-                            </p>
-                            <form id="changePassForm" class="space-y-3">
-                                <input type="password" id="newAdminPass" class="w-full px-3 py-2 border border-pink-light rounded-lg text-sm" placeholder="Nueva Contraseña" required>
-                                <input type="password" id="confirmAdminPass" class="w-full px-3 py-2 border border-pink-light rounded-lg text-sm" placeholder="Confirmar Contraseña" required>
-                                <button type="button" id="saveNewPassBtn" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-600 transition-all">
-                                    Actualizar Contraseña
-                                </button>
-                            </form>
-                        </div>
                     </div>
+
+                    <!-- ¡ELIMINADO! El panel de gestión de admin ya no es necesario -->
+                    <!-- ¡ELIMINADO! El panel de cambiar contraseña ya no es necesario -->
+                    
                 </div>
             </div>
             
@@ -375,7 +341,7 @@
         ¡Guardado correctamente!
     </div>
 
-    <!-- ¡NUEVO! Script de Registro de PWA -->
+    <!-- Script de Registro de PWA -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -399,7 +365,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
-            signInAnonymously, 
+            // ¡NUEVO! Imports para autenticación real
+            signInWithEmailAndPassword,
+            signOut,
             onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { 
@@ -447,9 +415,9 @@
         const loginError = document.getElementById('loginError');
         const welcomeUser = document.getElementById('welcomeUser');
         const toast = document.getElementById('toast');
-        const logoutButton = document.getElementById('logoutButton'); // ¡NUEVO!
+        const logoutButton = document.getElementById('logoutButton'); 
         
-        // Logos (¡NUEVO!)
+        // Logos
         const logoImageLogin = document.getElementById('logoImageLogin');
         const logoImageHeader = document.getElementById('logoImageHeader');
 
@@ -464,8 +432,8 @@
         // Botones
         const saveOrderBtn = document.getElementById('saveOrderBtn');
         const clearOrderBtn = document.getElementById('clearOrderBtn');
-        const saveProductBtn = document.getElementById('saveProductBtn'); // ¡NUEVO!
-        const productEditCancelBtn = document.getElementById('productEditCancelBtn'); // ¡NUEVO!
+        const saveProductBtn = document.getElementById('saveProductBtn');
+        const productEditCancelBtn = document.getElementById('productEditCancelBtn');
 
         // Listas
         const productsList = document.getElementById('productsList'); // Admin
@@ -491,22 +459,15 @@
         // Inputs Formulario Pedido
         const orderKmInput = document.getElementById('orderKm');
         
-        // ¡NUEVO! Inputs de Configuración
+        // Inputs de Configuración
         const shippingCostInput = document.getElementById('shippingCost');
         const storeNameInput = document.getElementById('storeName');
-        const logoUrlInput = document.getElementById('logoUrl'); // ¡NUEVO!
+        const logoUrlInput = document.getElementById('logoUrl'); 
         const folioPrefixInput = document.getElementById('folioPrefix');
         const nextFolioInput = document.getElementById('nextFolio');
         const saveSettingsBtn = document.getElementById('saveSettingsBtn');
         
-        // ¡NUEVO! Inputs de Admin
-        const addAdminForm = document.getElementById('addAdminForm');
-        const adminUsersList = document.getElementById('adminUsersList');
-        const noAdmins = document.getElementById('noAdmins');
-        
-        // ¡NUEVO! Inputs de Cambiar Contraseña
-        const loggedInAsUser = document.getElementById('loggedInAsUser');
-        const saveNewPassBtn = document.getElementById('saveNewPassBtn');
+        // ¡ELIMINADO! Referencias a gestión de admin simulado
 
         // Estado de la App
         let userId = null;
@@ -516,70 +477,91 @@
             shippingCost: 23.99 / 7, // $3.427...
             folioPrefix: 'MC-S-',
             nextFolio: 1,
-            logoUrl: '' // ¡NUEVO!
+            logoUrl: '' 
         };
         let productsData = []; // Caché local de productos
         let orderCart = []; // Carrito de pedido
-        let editingOrderId = null; // ¡NUEVO! Para saber si estamos editando
-        let editingProductId = null; // ¡NUEVO! Para editar productos
-        let adminUsers = []; // ¡NUEVO! Caché local de admins
-        let ordersData = []; // ¡NUEVO! Caché local de pedidos
-        let currentAdminUsername = null; // ¡NUEVO! Para saber quién está logueado
+        let editingOrderId = null; // Para saber si estamos editando
+        let editingProductId = null; // Para editar productos
+        let ordersData = []; // Caché local de pedidos
+        
+        // ¡NUEVO! Listeners (unsubscribers) de Firestore
+        let productListener = null;
+        let orderListener = null;
+        let settingsListener = null;
 
         // Referencias a Colecciones de Firestore
         let productCollectionRef;
         let ordersCollectionRef;
         let settingsDocRef; 
-        let adminCollectionRef; // ¡NUEVO!
 
         // ------------------------------------------------------------------
-        // Lógica de Autenticación y Login (¡MODIFICADO!)
+        // Lógica de Autenticación (¡MODIFICADA PARA AUTH REAL!)
         // ------------------------------------------------------------------
 
-        // PASO 1: Iniciar sesión anónimamente EN CUANTO CARGA LA PÁGINA
-        // Esto ocurre *antes* de que el usuario vea el login simulado.
-        (async () => {
-            try {
-                const userCredential = await signInAnonymously(auth);
-                const uid = userCredential.user.uid;
+        // PASO 1: Observador de estado de Auth
+        // Se dispara al cargar, al loguearse, y al desloguearse
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // --- Usuario está logueado ---
+                console.log("Usuario logueado:", user.uid);
+                userId = user.uid; // ¡El UID real del usuario!
                 
-                if (uid) {
-                    console.log("Conectado anónimamente con UID:", uid);
-                    // Iniciar listeners de datos INCLUSO si el login simulado no ha pasado
-                    initializeAppLocal(uid);
-                } else {
-                    loginError.textContent = "Error de autenticación anónima.";
-                    loginError.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error("Error al iniciar sesión anónimo en Firebase:", error);
-                loginError.textContent = "Error de conexión con Firebase.";
-                loginError.classList.remove('hidden');
-            }
-        })();
-
-
-        // PASO 2: El login Falso (Simulado)
-        // Ahora comprueba contra la lista 'adminUsers' cargada desde Firebase
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-
-            // Buscar al usuario en la lista cargada
-            const foundUser = adminUsers.find(admin => admin.id === user && admin.pass === pass);
-
-            if (foundUser) {
-                // ¡Éxito! Mostrar App y ocultar Login
-                currentAdminUsername = user; // ¡NUEVO! Guardamos el admin actual
-                welcomeUser.textContent = `¡Hola, ${currentAdminUsername}!`;
-                loggedInAsUser.textContent = currentAdminUsername; // ¡NUEVO!
-                
+                // Mostrar App y ocultar Login
+                welcomeUser.textContent = `¡Hola, ${user.email.split('@')[0]}!`;
                 loginScreen.classList.add('hidden');
                 appContainer.classList.remove('hidden');
+                
+                // Iniciar la app y cargar datos
+                initializeAppLocal(userId);
+                
             } else {
-                loginError.textContent = "Usuario o contraseña incorrectos.";
+                // --- Usuario no está logueado ---
+                console.log("Usuario deslogueado.");
+                userId = null;
+                
+                // Ocultar App y mostrar Login
+                loginScreen.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                
+                // Detener listeners de datos para evitar errores
+                cleanupListeners();
+            }
+        });
+
+        // PASO 2: Manejador del formulario de Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            loginError.classList.add('hidden'); // Ocultar error previo
+
+            try {
+                // Intentar iniciar sesión
+                await signInWithEmailAndPassword(auth, email, password);
+                // onAuthStateChanged se encargará del resto
+                
+            } catch (error) {
+                console.error("Error al iniciar sesión:", error.code);
+                let message = "Error al iniciar sesión.";
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                    message = "Email o contraseña incorrectos.";
+                } else if (error.code === 'auth/invalid-email') {
+                    message = "El formato del email es incorrecto.";
+                }
+                loginError.textContent = message;
                 loginError.classList.remove('hidden');
+            }
+        });
+
+        // PASO 3: Manejador de Cerrar Sesión
+        logoutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                // onAuthStateChanged se encargará de limpiar y mostrar login
+            } catch (error) {
+                console.error("Error al cerrar sesión:", error);
+                showToast("Error al cerrar sesión", true);
             }
         });
 
@@ -587,12 +569,14 @@
         // Inicialización de la App
         // ------------------------------------------------------------------
         
-        function initializeAppLocal(uid) {
+        function initializeAppLocal(uid) { 
             if (!uid) {
                 console.error("¡Fallo de inicialización! No hay UID.");
                 return;
             }
-            userId = uid;
+            
+            // Limpiar listeners antiguos por si acaso (ej. re-login)
+            cleanupListeners();
             
             initFirestoreRefs();
             initEventListeners();
@@ -609,7 +593,6 @@
             productCollectionRef = collection(db, 'users', userId, 'products');
             ordersCollectionRef = collection(db, 'users', userId, 'orders');
             settingsDocRef = doc(db, 'users', userId, 'config', 'main');
-            adminCollectionRef = collection(db, 'users', userId, 'admins'); // ¡CORREGIDO!
         }
         
         // ------------------------------------------------------------------
@@ -664,27 +647,27 @@
                 currency: 'MXN',
             });
         };
-
+        
         // ------------------------------------------------------------------
-        // Listeners de Eventos
+        // Listeners de Eventos (Solo se registran una vez)
         // ------------------------------------------------------------------
+        
+        // Variable para asegurar que los listeners solo se añadan una vez
+        let eventListenersInitialized = false;
 
         function initEventListeners() {
+            if (eventListenersInitialized) return; // Prevenir duplicados
+            
             // Formularios
             addProductForm.addEventListener('submit', onSaveProduct);
             
             // Botones
             saveOrderBtn.addEventListener('click', onSaveOrder);
-            clearOrderBtn.addEventListener('click', handleClearOrderClick);
+            clearOrderBtn.addEventListener('click', handleClearOrderClick); 
             saveSettingsBtn.addEventListener('click', onSaveSettings); 
-            productEditCancelBtn.addEventListener('click', cancelProductEdit); // ¡NUEVO!
-            logoutButton.addEventListener('click', () => location.reload()); // ¡NUEVO! Cierra sesión
+            productEditCancelBtn.addEventListener('click', cancelProductEdit); 
             
-            // ¡NUEVO! Formulario de Admin
-            addAdminForm.addEventListener('submit', onSaveAdminUser);
-            
-            // ¡NUEVO! Botón de Cambiar Contraseña
-            saveNewPassBtn.addEventListener('click', onSaveNewPassword);
+            // ¡ELIMINADO! El logoutButton se maneja arriba
 
             // Búsqueda
             adminProductSearch.addEventListener('input', renderAdminProductsList);
@@ -693,12 +676,14 @@
             // Clics en listas (Delegación de eventos)
             document.addEventListener('click', handleDocumentClick);
 
-            // Calculadora de Precio de Producto (¡CORREGIDA!)
+            // Calculadora de Precio de Producto
             productCostInput.addEventListener('input', updateCalculatedPrice);
             productMarginInput.addEventListener('input', updateCalculatedPrice);
             
-            // Calculadora de Envío (¡NUEVO!)
+            // Calculadora de Envío
             orderKmInput.addEventListener('input', updateOrderSummary);
+            
+            eventListenersInitialized = true;
         }
 
         // ------------------------------------------------------------------
@@ -710,7 +695,7 @@
             if (!userId) return;
 
             // Listener de Productos
-            onSnapshot(query(productCollectionRef), (snapshot) => {
+            productListener = onSnapshot(query(productCollectionRef), (snapshot) => {
                 productsData = [];
                 
                 if (snapshot.empty) {
@@ -734,7 +719,8 @@
             });
 
             // Listener de Pedidos Guardados
-            onSnapshot(query(ordersCollectionRef), (snapshot) => {
+            orderListener = onSnapshot(query(ordersCollectionRef), (snapshot) => {
+                ordersData = []; // Limpiar caché local
                 if (snapshot.empty) {
                     noOrders.classList.remove('hidden');
                     ordersList.innerHTML = '';
@@ -743,16 +729,15 @@
                     const orderItems = [];
                     snapshot.forEach(doc => {
                         const order = { ...doc.data(), id: doc.id };
+                        ordersData.push(order); // Guardar caché local
                         orderItems.push(renderOrderCard(order));
                     });
-                    // ¡NUEVO! Guardar caché local de pedidos
-                    ordersData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
                     ordersList.innerHTML = orderItems.join('');
                 }
             });
             
-            // ¡MODIFICADO! Listener de Configuración
-            onSnapshot(settingsDocRef, (docSnap) => {
+            // Listener de Configuración
+            settingsListener = onSnapshot(settingsDocRef, (docSnap) => {
                 if (docSnap.exists()) {
                     // Cargar configuración de Firebase
                     appSettings = { ...appSettings, ...docSnap.data() }; 
@@ -765,13 +750,13 @@
                 storeNameInput.value = appSettings.storeName;
                 folioPrefixInput.value = appSettings.folioPrefix;
                 nextFolioInput.value = appSettings.nextFolio;
-                logoUrlInput.value = appSettings.logoUrl; // ¡NUEVO!
+                logoUrlInput.value = appSettings.logoUrl; 
                 
                 // Actualizar UI
                 document.title = appSettings.storeName;
                 document.getElementById('appNameTitle').textContent = appSettings.storeName;
                 
-                // ¡NUEVO! Actualizar Logos
+                // Actualizar Logos
                 if (appSettings.logoUrl) {
                     logoImageLogin.src = appSettings.logoUrl;
                     logoImageHeader.src = appSettings.logoUrl;
@@ -785,33 +770,19 @@
                 // Actualizar cálculo de envío por si cambió
                 updateOrderSummary();
             });
+        }
+        
+        // ¡NUEVO! Función para limpiar listeners al cerrar sesión
+        function cleanupListeners() {
+            if (productListener) productListener();
+            if (orderListener) orderListener();
+            if (settingsListener) settingsListener();
             
-            // ¡NUEVO! Listener de Administradores
-            onSnapshot(query(adminCollectionRef), (snapshot) => {
-                adminUsers = []; // Limpiar caché
-                if (snapshot.empty) {
-                    // Si no hay NINGÚN admin, crear el de por defecto
-                    const defaultUser = "Michicatt";
-                    const defaultPass = "Strawberry";
-                    
-                    // ¡FIX! Agregar a caché local para que el primer login funcione
-                    adminUsers = [{ id: defaultUser, pass: defaultPass }]; 
-                    
-                    setDoc(doc(db, 'users', userId, 'admins', defaultUser), { pass: defaultPass })
-                        .catch(e => console.error("Error creating default admin:", e));
-                        
-                    noAdmins.classList.remove('hidden');
-                    adminUsersList.innerHTML = renderAdminUser(defaultUser); // Renderizar el usuario
-                } else {
-                    noAdmins.classList.add('hidden');
-                    const adminItems = [];
-                    snapshot.forEach(doc => {
-                        adminUsers.push({ id: doc.id, ...doc.data() }); // Cargar al caché
-                        adminItems.push(renderAdminUser(doc.id));
-                    });
-                    adminUsersList.innerHTML = adminItems.join('');
-                }
-            });
+            productListener = null;
+            orderListener = null;
+            settingsListener = null;
+            
+            console.log("Listeners de Firestore detenidos.");
         }
         
         // ------------------------------------------------------------------
@@ -819,7 +790,7 @@
         // ------------------------------------------------------------------
         
         async function handleDocumentClick(e) {
-            // Clic en un producto del catálogo en Cotizador (¡NUEVO!)
+            // Clic en un producto del catálogo en Cotizador
             if (e.target.closest('.add-to-cart-btn')) {
                 const item = e.target.closest('div[data-id]');
                 const id = item.dataset.id;
@@ -830,7 +801,19 @@
                 return;
             }
 
-            // ¡NUEVO! Clics en la lista de Productos del Admin
+            // Quitar item del carrito
+            if (e.target.classList.contains('remove-cart-item')) {
+                const item = e.target.closest('div[data-index]');
+                if (item) {
+                    const index = parseInt(item.dataset.index); 
+                    orderCart.splice(index, 1);
+                    renderOrderCart();
+                    updateOrderSummary();
+                }
+                return;
+            }
+            
+            // Clics en la lista de Productos del Admin
             const productItem = e.target.closest('#productsList div[data-id]');
             if (productItem) {
                 const id = productItem.dataset.id;
@@ -844,30 +827,14 @@
                     }
                 }
                 
-                // ¡NUEVO! Borrar admin
-                if (e.target.classList.contains('delete-admin')) {
-                    const item = e.target.closest('div[data-id]');
+                // Editar Producto
+                if (e.target.classList.contains('edit-product')) {
+                    loadProductForEditing(id);
                 }
                 return;
             }
 
-            // ¡NUEVO! Borrar admin
-            if (e.target.classList.contains('delete-admin')) {
-                const item = e.target.closest('div[data-id]');
-                const id = item.dataset.id;
-                if (adminUsers.length <= 1) {
-                    showToast("No puedes borrar al último administrador", true);
-                    return;
-                }
-                if (confirm(`¿Estás segura de borrar al admin "${id}"?`)) {
-                    deleteDoc(doc(db, 'users', userId, 'admins', id))
-                        .then(() => showToast("Admin eliminado"))
-                        .catch(e => showToast("Error al borrar", true));
-                }
-                return;
-            }
-
-            // Acciones de Pedido (PDF, ¡MODIFICADO!)
+            // Acciones de Pedido (PDF, Eliminar, Editar)
             const orderCard = e.target.closest('#ordersList div[data-id]');
             if (orderCard) {
                 const orderId = orderCard.dataset.id;
@@ -885,7 +852,7 @@
                     }
                 }
                 
-                // ¡NUEVO! Botón de Eliminar Pedido
+                // Botón de Eliminar Pedido
                 if (e.target.classList.contains('delete-order')) {
                     if (confirm("¿Estás segura de borrar este pedido? No se puede deshacer.")) {
                         deleteDoc(doc(db, 'users', userId, 'orders', orderId))
@@ -894,7 +861,7 @@
                     }
                 }
                 
-                // ¡NUEVO! Botón de Editar Pedido
+                // Botón de Editar Pedido
                 if (e.target.classList.contains('edit-order')) {
                     loadOrderForEditing(orderId);
                 }
@@ -903,7 +870,7 @@
         }
 
         // ------------------------------------------------------------------
-        // Lógica de Pestaña PRODUCTOS (¡CORREGIDA!)
+        // Lógica de Pestaña PRODUCTOS
         // ------------------------------------------------------------------
 
         // --- Calcular Precio en Tiempo Real ---
@@ -916,7 +883,7 @@
                 return;
             }
 
-            // ¡Validación importante! Un margen de 100% o más resultaría en un precio infinito
+            // ¡Validación importante!
             if (marginPercent >= 100) {
                 productPricePublicOutput.value = "Error: Margen >= 100%";
                 return;
@@ -924,8 +891,7 @@
             
             const margin = marginPercent / 100; // Convertir 50 a 0.5
             
-            // FÓRMULA DE MARGEN (Ganancia sobre Precio) - ¡CORREGIDA!
-            // Precio = Costo / (1 - %Ganancia)
+            // FÓRMULA DE MARGEN (Ganancia sobre Precio)
             const price = cost / (1 - margin); 
             
             productPricePublicOutput.value = formatCurrency(price);
@@ -936,7 +902,7 @@
             e.preventDefault();
             const name = document.getElementById('productName').value;
             const cost = parseFloat(productCostInput.value);
-            const marginPercent = parseFloat(productMarginInput.value); // Renombrado para claridad
+            const marginPercent = parseFloat(productMarginInput.value); 
 
             if (isNaN(cost) || isNaN(marginPercent)) {
                 showToast("Costo y Margen deben ser números", true);
@@ -949,15 +915,13 @@
             }
 
             const margin = marginPercent / 100; // Convertir 50 a 0.5
-            
-            // FÓRMULA DE MARGEN (Ganancia sobre Precio) - ¡CORREGIDA!
             const price = cost / (1 - margin); 
 
             const productData = { 
                 name, 
                 cost, 
-                margin: marginPercent, // Guardar el % (ej. 50)
-                price // Guardamos el precio calculado
+                margin: marginPercent, 
+                price 
             };
 
             try {
@@ -978,7 +942,7 @@
             }
         }
         
-        // --- ¡NUEVA! Cargar Producto para Editar ---
+        // --- Cargar Producto para Editar ---
         function loadProductForEditing(id) {
             const product = productsData.find(p => p.id === id);
             if (!product) {
@@ -1003,7 +967,7 @@
             addProductForm.scrollIntoView({ behavior: 'smooth' });
         }
         
-        // --- ¡NUEVA! Cancelar Edición de Producto ---
+        // --- Cancelar Edición de Producto ---
         function cancelProductEdit() {
             editingProductId = null;
             addProductForm.reset();
@@ -1030,13 +994,13 @@
                             Público: ${formatCurrency(product.price)}
                         </p>
                     </div>
-                    <!-- ¡NUEVO! Botones de Edición -->
+                    <!-- Botones de Edición -->
                     <div class="flex gap-2">
-                        <button class="edit-product text-blue-500 hover:text-blue-700 font-semibold text-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM5 13H3V6.414l5-5L9.414 3 5 7.414V13zM15 17H5v-5l-2-2v7a2 2 0 002 2h10a2 2 0 002-2v-2l-2 2z"/></svg>
+                        <button class="edit-product text-blue-500 hover:text-blue-700 font-semibold text-lg" title="Editar">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM5 13H3V6.414l5-5L9.414 3 5 7.414V13zM15 17H5v-5l-2-2v7a2 2 0 002 2h10a2 2 0 002-2v-2l-2 2z"/></svg>
                         </button>
-                        <button class="delete-product text-red-400 hover:text-red-600 font-bold text-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 3a1 1 0 011-1h6a1 1 0 011 1v2h2a1 1 0 011 1v1H3V6a1 1 0 011-1h2V3zM3 10v7a2 2 0 002 2h10a2 2 0 002-2v-7H3zm3 4a1 1 0 102 0v-4a1 1 0 10-2 0v4zm4 0a1 1 0 102 0v-4a1 1 0 10-2 0v4z" clip-rule="evenodd" /></svg>
+                        <button class="delete-product text-red-400 hover:text-red-600 font-bold text-lg" title="Eliminar">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 3a1 1 0 011-1h6a1 1 0 011 1v2h2a1 1 0 011 1v1H3V6a1 1 0 011-1h2V3zM3 10v7a2 2 0 002 2h10a2 2 0 002-2v-7H3zm3 4a1 1 0 102 0v-4a1 1 0 10-2 0v4zm4 0a1 1 0 102 0v-4a1 1 0 10-2 0v4z" clip-rule="evenodd" /></svg>
                         </button>
                     </div>
                 </div>
@@ -1044,7 +1008,7 @@
         }
         
         // ------------------------------------------------------------------
-        // Lógica del COTIZADOR (¡NUEVA!)
+        // Lógica del COTIZADOR
         // ------------------------------------------------------------------
         
         // --- Renderizar Catálogo (Cotizador) ---
@@ -1114,7 +1078,7 @@
             const distance = parseFloat(orderKmInput.value) || 0;
             
             const subtotal = orderCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            // ¡CORREGIDO! Usar appSettings.shippingCost en lugar de la variable antigua
+            // Usar appSettings.shippingCost
             const shipping = distance * appSettings.shippingCost;
             const total = subtotal + shipping;
 
@@ -1126,8 +1090,6 @@
         }
 
         // --- Limpiar Pedido ---
-        // ¡FUNCIÓN REFACTORIZADA! (¡CORRECCIÓN DE BUG!)
-        
         // 1. La función que SÍ limpia (sin preguntar)
         function clearOrderForm() {
             orderCart = [];
@@ -1145,8 +1107,12 @@
         
         // 2. El manejador del botón, que SÍ pregunta
         function handleClearOrderClick() {
-            if (!confirm("¿Estás segura de limpiar este pedido?")) return;
-            clearOrderForm();
+            if (editingOrderId) {
+                // Si estamos editando, "limpiar" es "cancelar"
+                clearOrderForm();
+            } else if (confirm("¿Estás segura de limpiar este pedido?")) {
+                clearOrderForm();
+            }
         }
 
         // --- Guardar Pedido ---
@@ -1202,7 +1168,7 @@
             }
         }
         
-        // --- ¡NUEVO! Cargar Pedido para Editar ---
+        // --- Cargar Pedido para Editar ---
         function loadOrderForEditing(orderId) {
             const order = ordersData.find(o => o.id === orderId);
             if (!order) {
@@ -1221,7 +1187,7 @@
             updateOrderSummary();
             
             // 3. Cambiar botón a modo "Actualizar"
-            saveOrderBtn.textContent = "Actualizar Pedido";
+            saveOrderBtn.textContent = `Actualizar Pedido (${order.folio})`;
             saveOrderBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
             saveOrderBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
             
@@ -1252,7 +1218,7 @@
                 <div class="bg-white p-5 rounded-2xl shadow-lg" data-id="${order.id}">
                     <div class="flex justify-between items-start">
                         <h3 class="font-bold text-lg text-pink-secondary">${order.clientName}</h3>
-                        <!-- ¡NUEVO! Folio -->
+                        <!-- Folio -->
                         <span class="text-xs font-mono bg-pink-light text-pink-dark px-2 py-1 rounded-full">${order.folio || 'SIN-FOLIO'}</span>
                     </div>
                     <p class="text-sm text-pink-dark/60 mb-3">ID: ${order.id.substring(0, 6)} | ${date}</p>
@@ -1265,15 +1231,15 @@
                         <p class="flex justify-between text-base font-bold text-pink-secondary"><span>Total:</span> <span>${formatCurrency(order.total)}</span></p>
                     </div>
 
-                    <!-- ¡NUEVO! Botones de Acción -->
+                    <!-- Botones de Acción -->
                     <div class="mt-6 grid grid-cols-3 gap-2">
-                        <button class="download-order-pdf w-full text-xs bg-blue-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-blue-600 transition-all">
+                        <button class="download-order-pdf w-full text-xs bg-blue-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-blue-600 transition-all" title="Descargar PDF">
                             PDF
                         </button>
-                        <button class="edit-order w-full text-xs bg-yellow-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-yellow-600 transition-all">
+                        <button class="edit-order w-full text-xs bg-yellow-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-yellow-600 transition-all" title="Editar">
                             Editar
                         </button>
-                        <button class="delete-order w-full text-xs bg-red-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-red-600 transition-all">
+                        <button class="delete-order w-full text-xs bg-red-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-red-600 transition-all" title="Eliminar">
                             Eliminar
                         </button>
                     </div>
@@ -1285,9 +1251,6 @@
         // Lógica de Generación de PDF
         // ------------------------------------------------------------------
         
-        // Cargar jsPDF globalmente
-        // const { jsPDF } = window.jspdf; // ¡BUG! Movido para corregir error de carga
-        
         function getBasePDF(title) {
             // ¡CORRECCIÓN DE BUG! Se inicializa aquí para asegurar que la librería esté cargada
             const { jsPDF } = window.jspdf; 
@@ -1297,7 +1260,7 @@
             // Encabezado
             doc.setFontSize(22);
             doc.setTextColor(236, 72, 153); // Color 'pink-secondary'
-            doc.text("MichiCatt Store", 20, 20);
+            doc.text(appSettings.storeName, 20, 20); // Usar nombre de la tienda
             
             doc.setFontSize(10);
             doc.setTextColor(131, 24, 67); // Color 'pink-dark'
@@ -1311,21 +1274,20 @@
         }
 
         // --- Generar PDF de Pedido ---
-        // --- Generar PDF de Pedido ---
         function generateOrderPDF(order) {
             const doc = getBasePDF("Resumen de Pedido");
-            const date = order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString('es-MX') : 'Fecha N/A';
+            const date = order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString('es-MX') : 'Fecha N/D';
             
             doc.setFontSize(10);
             doc.text(`ID: ${order.id}`, 190, 26, { align: 'right' });
             doc.text(`Fecha: ${date}`, 190, 31, { align: 'right' });
             doc.setFont("helvetica", "bold");
-            doc.text(`Folio: ${order.folio || 'N/A'}`, 190, 36, { align: 'right' }); // ¡NUEVO! Folio en PDF
+            doc.text(`Folio: ${order.folio || 'N/A'}`, 190, 36, { align: 'right' });
 
             doc.setFontSize(12);
             doc.setFont("helvetica", "normal");
             
-            // ¡NUEVO! Nombre del Cliente
+            // Nombre del Cliente
             doc.setFont("helvetica", "bold");
             doc.text("Cliente:", 20, 45);
             doc.setFont("helvetica", "normal");
@@ -1359,7 +1321,7 @@
             doc.save(`Pedido_${order.clientName}_${order.id.substring(0,6)}.pdf`);
         }
 
-        // ¡NUEVA FUNCIÓN! Guardar Ajustes de Configuración
+        // --- Guardar Ajustes de Configuración ---
         async function onSaveSettings(e) {
             e.preventDefault();
             // Recolectar todos los nuevos datos
@@ -1367,7 +1329,7 @@
             const newName = storeNameInput.value.trim();
             const newPrefix = folioPrefixInput.value;
             const newNextFolio = parseInt(nextFolioInput.value);
-            const newLogoUrl = logoUrlInput.value.trim(); // ¡NUEVO!
+            const newLogoUrl = logoUrlInput.value.trim();
             
             if (isNaN(newCost) || newCost < 0) {
                 showToast("El costo por KM debe ser un número positivo", true); return;
@@ -1384,7 +1346,7 @@
                 storeName: newName,
                 folioPrefix: newPrefix,
                 nextFolio: newNextFolio,
-                logoUrl: newLogoUrl // ¡NUEVO!
+                logoUrl: newLogoUrl
             };
 
             try {
@@ -1395,69 +1357,6 @@
             } catch (error) {
                 console.error("Error al guardar ajustes:", error);
                 showToast("Error al guardar ajustes", true);
-            }
-        }
-        
-        // ¡NUEVA FUNCIÓN! Renderizar item de admin
-        function renderAdminUser(username) {
-            return `
-                <div class="flex justify-between items-center bg-pink-bg p-2 rounded-lg" data-id="${username}">
-                    <span class="text-sm font-medium text-pink-dark">${username}</span>
-                    <button class="delete-admin text-red-400 hover:text-red-600 font-bold text-lg">&times;</button>
-                </div>
-            `;
-        }
-        
-        // ¡NUEVA FUNCIÓN! Guardar Admin User
-        async function onSaveAdminUser(e) {
-            e.preventDefault();
-            const user = document.getElementById('adminUser').value.trim();
-            const pass = document.getElementById('adminPass').value.trim();
-            
-            if (!user || !pass) {
-                showToast("Usuario y contraseña no pueden estar vacíos", true);
-                return;
-            }
-            
-            try {
-                // Usamos el 'user' como ID del documento
-                await setDoc(doc(db, 'users', userId, 'admins', user), { pass });
-                showToast("Administrador guardado");
-                addAdminForm.reset();
-            } catch (error) {
-                console.error("Error al guardar admin:", error);
-                showToast("Error al guardar admin", true);
-            }
-        }
-        
-        // ¡NUEVA FUNCIÓN! Cambiar Contraseña del Admin Logueado
-        async function onSaveNewPassword() {
-            const newPass = document.getElementById('newAdminPass').value;
-            const confirmPass = document.getElementById('confirmAdminPass').value;
-
-            if (!newPass || !confirmPass) {
-                showToast("Completa ambos campos", true); 
-                return;
-            }
-            if (newPass !== confirmPass) {
-                showToast("Las contraseñas no coinciden", true); 
-                return;
-            }
-            if (!currentAdminUsername) { // Check de seguridad
-                showToast("Error: No se ha identificado al admin", true); 
-                return;
-            }
-            
-            try {
-                // Actualizamos el documento del admin actual
-                await setDoc(doc(db, 'users', userId, 'admins', currentAdminUsername), { pass: newPass });
-                showToast("¡Contraseña actualizada!");
-                // Limpiar campos
-                document.getElementById('newAdminPass').value = '';
-                document.getElementById('confirmAdminPass').value = '';
-            } catch (error) {
-                console.error("Error al cambiar contraseña:", error);
-                showToast("Error al cambiar contraseña", true);
             }
         }
 

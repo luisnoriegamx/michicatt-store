@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MichiCatt Store</title> <!-- Se actualizará dinámicamente -->
+    
+    <!-- ¡NUEVO! Meta tags para PWA -->
+    <meta name="theme-color" content="#F472B6"/>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MichiCatt Store">
+    
     <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Carga de jsPDF para generar PDFs -->
@@ -80,6 +89,9 @@
     <!-- Pantalla de Login -->
     <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-pink-primary p-4">
         <div class="bg-white w-full max-w-sm p-8 rounded-2xl shadow-2xl text-center">
+            <!-- ¡NUEVO! Espacio para el Logo en Login -->
+            <img id="logoImageLogin" src="" alt="Logo" class="max-h-20 mx-auto mb-4 hidden">
+            
             <h1 class="text-3xl font-bold text-pink-secondary mb-2">MichiCatt Store</h1>
             <p class="text-pink-dark mb-6">Panel de Administración</p>
             <form id="loginForm">
@@ -105,9 +117,22 @@
         <!-- Cabecera -->
         <header class="bg-white shadow-md p-4 sticky top-0 z-40">
             <div class="container mx-auto flex justify-between items-center">
-                <!-- El ID appNameTitle permite que se actualice dinámicamente -->
-                <h1 id="appNameTitle" class="text-xl sm:text-2xl font-bold text-pink-secondary">MichiCatt Store</h1>
-                <span id="welcomeUser" class="text-sm text-pink-dark font-medium"></span>
+                
+                <!-- ¡NUEVO! Logo y Título -->
+                <div class="flex items-center gap-3">
+                    <img id="logoImageHeader" src="" alt="Logo" class="max-h-10 hidden">
+                    <h1 id="appNameTitle" class="text-xl sm:text-2xl font-bold text-pink-secondary">MichiCatt Store</h1>
+                </div>
+
+                <!-- ¡NUEVO! Botón de Cerrar Sesión -->
+                <div class="flex items-center gap-4">
+                    <span id="welcomeUser" class="text-sm text-pink-dark font-medium hidden sm:block"></span>
+                    <button id="logoutButton" class="text-pink-dark/70 hover:text-pink-primary" title="Cerrar Sesión">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -228,8 +253,12 @@
                                     <label for="productPricePublic" class="block text-sm font-medium text-pink-dark mb-1">Precio al Cliente (Calculado)</label>
                                     <input type="text" id="productPricePublic" class="w-full px-4 py-2 border border-pink-light rounded-lg bg-pink-bg text-pink-dark font-bold outline-none" readonly>
                                 </div>
-                                <button type="submit" class="w-full bg-pink-primary text-white py-2 px-4 rounded-lg font-semibold shadow-lg hover:bg-pink-secondary transition-all duration-300 btn-pulse">
+                                <button type="submit" id="saveProductBtn" class="w-full bg-pink-primary text-white py-2 px-4 rounded-lg font-semibold shadow-lg hover:bg-pink-secondary transition-all duration-300 btn-pulse">
                                     Guardar Producto
+                                </button>
+                                <!-- ¡NUEVO! Botón de Cancelar Edición -->
+                                <button type="button" id="productEditCancelBtn" class="w-full mt-2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300 hidden">
+                                    Cancelar Edición
                                 </button>
                             </form>
                         </div>
@@ -267,6 +296,12 @@
                             <div>
                                 <label for="storeName" class="block text-sm font-medium text-pink-dark mb-1">Nombre de la Tienda</label>
                                 <input type="text" id="storeName" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
+                            </div>
+
+                            <!-- ¡NUEVO! URL del Logo -->
+                            <div>
+                                <label for="logoUrl" class="block text-sm font-medium text-pink-dark mb-1">URL del Logo de la Tienda</label>
+                                <input type="url" id="logoUrl" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" placeholder="https://ejemplo.com/logo.png">
                             </div>
 
                             <div>
@@ -322,6 +357,21 @@
     <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-xl opacity-0 transform translate-y-10 transition-all duration-500 z-50">
         ¡Guardado correctamente!
     </div>
+
+    <!-- ¡NUEVO! Script de Registro de PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
 
     <!-- ================================================================== -->
     <!-- Carga de Firebase y Lógica de la App -->
@@ -380,7 +430,12 @@
         const loginError = document.getElementById('loginError');
         const welcomeUser = document.getElementById('welcomeUser');
         const toast = document.getElementById('toast');
+        const logoutButton = document.getElementById('logoutButton'); // ¡NUEVO!
         
+        // Logos (¡NUEVO!)
+        const logoImageLogin = document.getElementById('logoImageLogin');
+        const logoImageHeader = document.getElementById('logoImageHeader');
+
         // Pestañas
         const tabs = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -392,6 +447,8 @@
         // Botones
         const saveOrderBtn = document.getElementById('saveOrderBtn');
         const clearOrderBtn = document.getElementById('clearOrderBtn');
+        const saveProductBtn = document.getElementById('saveProductBtn'); // ¡NUEVO!
+        const productEditCancelBtn = document.getElementById('productEditCancelBtn'); // ¡NUEVO!
 
         // Listas
         const productsList = document.getElementById('productsList'); // Admin
@@ -420,6 +477,7 @@
         // ¡NUEVO! Inputs de Configuración
         const shippingCostInput = document.getElementById('shippingCost');
         const storeNameInput = document.getElementById('storeName');
+        const logoUrlInput = document.getElementById('logoUrl'); // ¡NUEVO!
         const folioPrefixInput = document.getElementById('folioPrefix');
         const nextFolioInput = document.getElementById('nextFolio');
         const saveSettingsBtn = document.getElementById('saveSettingsBtn');
@@ -436,11 +494,13 @@
             storeName: 'MichiCatt Store',
             shippingCost: 23.99 / 7, // $3.427...
             folioPrefix: 'MC-S-',
-            nextFolio: 1
+            nextFolio: 1,
+            logoUrl: '' // ¡NUEVO!
         };
         let productsData = []; // Caché local de productos
         let orderCart = []; // Carrito de pedido
         let editingOrderId = null; // ¡NUEVO! Para saber si estamos editando
+        let editingProductId = null; // ¡NUEVO! Para editar productos
         let adminUsers = []; // ¡NUEVO! Caché local de admins
         let ordersData = []; // ¡NUEVO! Caché local de pedidos
 
@@ -592,6 +652,8 @@
             saveOrderBtn.addEventListener('click', onSaveOrder);
             clearOrderBtn.addEventListener('click', handleClearOrderClick);
             saveSettingsBtn.addEventListener('click', onSaveSettings); 
+            productEditCancelBtn.addEventListener('click', cancelProductEdit); // ¡NUEVO!
+            logoutButton.addEventListener('click', () => location.reload()); // ¡NUEVO! Cierra sesión
             
             // ¡NUEVO! Formulario de Admin
             addAdminForm.addEventListener('submit', onSaveAdminUser);
@@ -675,10 +737,22 @@
                 storeNameInput.value = appSettings.storeName;
                 folioPrefixInput.value = appSettings.folioPrefix;
                 nextFolioInput.value = appSettings.nextFolio;
+                logoUrlInput.value = appSettings.logoUrl; // ¡NUEVO!
                 
                 // Actualizar UI
                 document.title = appSettings.storeName;
                 document.getElementById('appNameTitle').textContent = appSettings.storeName;
+                
+                // ¡NUEVO! Actualizar Logos
+                if (appSettings.logoUrl) {
+                    logoImageLogin.src = appSettings.logoUrl;
+                    logoImageHeader.src = appSettings.logoUrl;
+                    logoImageLogin.classList.remove('hidden');
+                    logoImageHeader.classList.remove('hidden');
+                } else {
+                    logoImageLogin.classList.add('hidden');
+                    logoImageHeader.classList.add('hidden');
+                }
                 
                 // Actualizar cálculo de envío por si cambió
                 updateOrderSummary();
@@ -720,6 +794,27 @@
                 const product = productsData.find(p => p.id === id);
                 if (product) {
                     addProductToCart(product);
+                }
+                return;
+            }
+
+            // ¡NUEVO! Clics en la lista de Productos del Admin
+            const productItem = e.target.closest('#productsList div[data-id]');
+            if (productItem) {
+                const id = productItem.dataset.id;
+                
+                // Borrar Producto
+                if (e.target.classList.contains('delete-product')) {
+                    if (confirm("¿Estás segura de borrar este producto del catálogo?")) {
+                        deleteDoc(doc(db, 'users', userId, 'products', id))
+                            .then(() => showToast("Producto eliminado"))
+                            .catch(e => showToast("Error al eliminar", true));
+                    }
+                }
+                
+                // Editar Producto
+                if (e.target.classList.contains('edit-product')) {
+                    loadProductForEditing(id);
                 }
                 return;
             }
@@ -826,20 +921,63 @@
             // FÓRMULA DE MARGEN (Ganancia sobre Precio) - ¡CORREGIDA!
             const price = cost / (1 - margin); 
 
+            const productData = { 
+                name, 
+                cost, 
+                margin: marginPercent, // Guardar el % (ej. 50)
+                price // Guardamos el precio calculado
+            };
+
             try {
-                await addDoc(productCollectionRef, { 
-                    name, 
-                    cost, 
-                    margin: marginPercent, // Guardar el % (ej. 50)
-                    price // Guardamos el precio calculado
-                });
-                showToast("Producto guardado");
-                addProductForm.reset();
-                productPricePublicOutput.value = "";
+                if (editingProductId) {
+                    // --- MODO ACTUALIZACIÓN ---
+                    await setDoc(doc(db, 'users', userId, 'products', editingProductId), productData);
+                    showToast("Producto actualizado");
+                } else {
+                    // --- MODO CREACIÓN ---
+                    await addDoc(productCollectionRef, productData);
+                    showToast("Producto guardado");
+                }
+                cancelProductEdit(); // Limpiar formulario y resetear modo
+                
             } catch (error) {
                 console.error("Error al guardar producto:", error);
                 showToast("Error al guardar producto", true);
             }
+        }
+        
+        // --- ¡NUEVA! Cargar Producto para Editar ---
+        function loadProductForEditing(id) {
+            const product = productsData.find(p => p.id === id);
+            if (!product) {
+                showToast("No se encontró el producto", true);
+                return;
+            }
+            
+            // 1. Llenar el formulario
+            document.getElementById('productName').value = product.name;
+            productCostInput.value = product.cost;
+            productMarginInput.value = product.margin;
+            
+            // 2. Actualizar estado
+            editingProductId = id;
+            updateCalculatedPrice(); // Calcular precio
+            
+            // 3. Cambiar UI del formulario
+            saveProductBtn.textContent = "Actualizar Producto";
+            productEditCancelBtn.classList.remove('hidden');
+            
+            // 4. Scroll al formulario
+            addProductForm.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // --- ¡NUEVA! Cancelar Edición de Producto ---
+        function cancelProductEdit() {
+            editingProductId = null;
+            addProductForm.reset();
+            productPricePublicOutput.value = "";
+            saveProductBtn.textContent = "Guardar Producto";
+            productEditCancelBtn.classList.add('hidden');
         }
 
         // --- Renderizar Lista (Admin) ---
@@ -860,7 +998,15 @@
                             Público: ${formatCurrency(product.price)}
                         </p>
                     </div>
-                    <button class="delete-product text-red-400 hover:text-red-600 font-bold text-xl">&times;</button>
+                    <!-- ¡NUEVO! Botones de Edición -->
+                    <div class="flex gap-2">
+                        <button class="edit-product text-blue-500 hover:text-blue-700 font-semibold text-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM5 13H3V6.414l5-5L9.414 3 5 7.414V13zM15 17H5v-5l-2-2v7a2 2 0 002 2h10a2 2 0 002-2v-2l-2 2z"/></svg>
+                        </button>
+                        <button class="delete-product text-red-400 hover:text-red-600 font-bold text-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 3a1 1 0 011-1h6a1 1 0 011 1v2h2a1 1 0 011 1v1H3V6a1 1 0 011-1h2V3zM3 10v7a2 2 0 002 2h10a2 2 0 002-2v-7H3zm3 4a1 1 0 102 0v-4a1 1 0 10-2 0v4zm4 0a1 1 0 102 0v-4a1 1 0 10-2 0v4z" clip-rule="evenodd" /></svg>
+                        </button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -1147,6 +1293,12 @@
             doc.setFontSize(12);
             doc.setFont("helvetica", "normal");
             
+            // ¡NUEVO! Nombre del Cliente
+            doc.setFont("helvetica", "bold");
+            doc.text("Cliente:", 20, 45);
+            doc.setFont("helvetica", "normal");
+            doc.text(order.clientName, 40, 45);
+            
             const tableColumn = ["Cant.", "Producto", "Precio Unit.", "Total"];
             const tableRows = order.items.map(item => [
                 item.quantity,
@@ -1183,6 +1335,7 @@
             const newName = storeNameInput.value.trim();
             const newPrefix = folioPrefixInput.value;
             const newNextFolio = parseInt(nextFolioInput.value);
+            const newLogoUrl = logoUrlInput.value.trim(); // ¡NUEVO!
             
             if (isNaN(newCost) || newCost < 0) {
                 showToast("El costo por KM debe ser un número positivo", true); return;
@@ -1198,7 +1351,8 @@
                 shippingCost: newCost,
                 storeName: newName,
                 folioPrefix: newPrefix,
-                nextFolio: newNextFolio
+                nextFolio: newNextFolio,
+                logoUrl: newLogoUrl // ¡NUEVO!
             };
 
             try {

@@ -3,24 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MichiCatt Store</title> <!-- Se actualizará dinámicamente -->
-    
-    <!-- Meta tags para PWA -->
-    <meta name="theme-color" content="#F472B6"/>
+    <title>MichiCatt Store</title> <meta name="theme-color" content="#F472B6"/>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="MichiCatt Store">
+
+    <link rel="icon" href="https://placehold.co/192x192/F472B6/FFFFFF?text=MC-S&font=sans-serif" type="image/png">
     
-    <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Carga de jsPDF para generar PDFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Carga de AutoTable para jsPDF (para tablas) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     
-    <!-- Configuración de Tailwind y Estilos Personalizados -->
     <script>
         tailwind.config = {
             theme: {
@@ -90,10 +86,8 @@
 </head>
 <body class="bg-pink-bg text-pink-dark font-sans relative min-h-screen overflow-x-hidden">
 
-    <!-- Pantalla de Login -->
     <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-pink-primary p-4">
         <div class="bg-white w-full max-w-sm p-8 rounded-2xl shadow-2xl text-center">
-            <!-- Espacio para el Logo en Login -->
             <img id="logoImageLogin" src="" alt="Logo" class="max-h-20 mx-auto mb-4 hidden">
             
             <h1 class="text-3xl font-bold text-pink-secondary mb-2">MichiCatt Store</h1>
@@ -115,20 +109,16 @@
         </div>
     </div>
 
-    <!-- Contenido Principal de la App (Oculto por defecto) -->
     <div id="appContainer" class="hidden">
         
-        <!-- Cabecera -->
         <header class="bg-white shadow-md p-4 sticky top-0 z-40">
             <div class="container mx-auto flex justify-between items-center">
                 
-                <!-- Logo y Título -->
                 <div class="flex items-center gap-3">
                     <img id="logoImageHeader" src="" alt="Logo" class="max-h-10 hidden">
                     <h1 id="appNameTitle" class="text-xl sm:text-2xl font-bold text-pink-secondary">MichiCatt Store</h1>
                 </div>
 
-                <!-- Botón de Cerrar Sesión -->
                 <div class="flex items-center gap-4">
                     <span id="welcomeUser" class="text-sm text-pink-dark font-medium hidden sm:block"></span>
                     <button id="logoutButton" class="text-pink-dark/70 hover:text-pink-primary" title="Cerrar Sesión">
@@ -140,7 +130,6 @@
             </div>
         </header>
 
-        <!-- Navegación por Pestañas -->
         <nav class="bg-white shadow-sm sticky top-[68px] sm:top-[76px] z-30">
             <div class="container mx-auto px-4">
                 <div class="flex border-b border-pink-100 overflow-x-auto no-scrollbar">
@@ -160,28 +149,22 @@
             </div>
         </nav>
 
-        <!-- Contenedor de Pestañas -->
         <main class="container mx-auto p-4 md:p-6">
             
-            <!-- Pestaña: Cotizador -->
             <div id="cotizador" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     
-                    <!-- Columna 1: Mi Catálogo -->
                     <div class="bg-white p-6 rounded-2xl shadow-lg">
                         <h2 class="text-2xl font-bold text-pink-secondary mb-4">Mi Catálogo</h2>
                         <input type="text" id="quoteProductSearch" class="w-full px-4 py-2 border border-pink-light rounded-lg mb-4" placeholder="Buscar producto...">
                         <div id="quoteCatalogList" class="max-h-96 overflow-y-auto pr-2 space-y-2">
-                            <!-- Lista de productos del catálogo se cargará aquí -->
                             <p id="noCatalogProducts" class="text-pink-dark/60">Agrega productos en la pestaña 'Productos'.</p>
                         </div>
                     </div>
 
-                    <!-- Columna 2: Nuevo Pedido -->
                     <div class="bg-white p-6 rounded-2xl shadow-lg space-y-4">
                         <h2 class="text-2xl font-bold text-pink-secondary">Nuevo Pedido</h2>
                         
-                        <!-- Formulario de Pedido -->
                         <form id="newOrderForm">
                             <div>
                                 <label for="orderClientName" class="block text-sm font-medium text-pink-dark mb-1">Nombre del Cliente (Manual)</label>
@@ -193,14 +176,11 @@
                             </div>
                         </form>
                         
-                        <!-- Carrito de Pedido -->
                         <h3 class="text-lg font-semibold text-pink-dark pt-2">Carrito de Pedido</h3>
                         <div id="orderCartItems" class="mb-4 max-h-60 overflow-y-auto pr-2 space-y-2">
-                            <!-- Los artículos del carrito se agregarán aquí -->
                             <p id="emptyCart" class="text-pink-dark/60">Agrega productos desde el catálogo.</p>
                         </div>
                         
-                        <!-- Resumen de Costos -->
                         <div class="bg-pink-bg p-4 rounded-lg space-y-2">
                             <h4 class="text-lg font-bold text-pink-dark">Resumen del Pedido</h4>
                             <div class="flex justify-between">
@@ -217,7 +197,6 @@
                             </div>
                         </div>
                         
-                        <!-- Botones de Acción -->
                         <div class="flex gap-4">
                             <button type="button" id="clearOrderBtn" class="w-1/2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300">
                                 Limpiar
@@ -230,20 +209,16 @@
                 </div>
             </div>
 
-            <!-- Pestaña: Pedidos Guardados -->
             <div id="pedidos" class="tab-content hidden">
                 <h2 class="text-2xl font-bold text-pink-secondary mb-6">Pedidos Guardados</h2>
                 <div id="ordersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Los pedidos guardados se cargarán aquí -->
                     <p id="noOrders" class="col-span-full text-pink-dark/60">No hay pedidos guardados.</p>
                 </div>
             </div>
 
-            <!-- Pestaña: Productos -->
             <div id="productos" class="tab-content hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
-                    <!-- Columna 1: Agregar/Editar Producto -->
                     <div class="lg:col-span-1 space-y-6">
                         <div class="bg-white p-6 rounded-2xl shadow-lg">
                             <h2 class="text-2xl font-bold text-pink-secondary mb-6">Agregar Producto</h2>
@@ -260,7 +235,6 @@
                                     <label for="productMargin" class="block text-sm font-medium text-pink-dark mb-1">% de Ganancia (ej. 50)</label>
                                     <input type="number" id="productMargin" min="0" max="99.99" step="0.01" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" required>
                                 </div>
-                                <!-- Precio al Cliente (Solo Lectura) -->
                                 <div class="mb-6">
                                     <label for="productPricePublic" class="block text-sm font-medium text-pink-dark mb-1">Precio al Cliente (Calculado)</label>
                                     <input type="text" id="productPricePublic" class="w-full px-4 py-2 border border-pink-light rounded-lg bg-pink-bg text-pink-dark font-bold outline-none" readonly>
@@ -268,7 +242,6 @@
                                 <button type="submit" id="saveProductBtn" class="w-full bg-pink-primary text-white py-2 px-4 rounded-lg font-semibold shadow-lg hover:bg-pink-secondary transition-all duration-300 btn-pulse">
                                     Guardar Producto
                                 </button>
-                                <!-- Botón de Cancelar Edición -->
                                 <button type="button" id="productEditCancelBtn" class="w-full mt-2 bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300 hidden">
                                     Cancelar Edición
                                 </button>
@@ -276,12 +249,10 @@
                         </div>
                     </div>
 
-                    <!-- Columna 2 y 3: Mi Catálogo -->
                     <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
                         <h2 class="text-2xl font-bold text-pink-secondary mb-4">Mi Catálogo de Productos</h2>
                         <input type="text" id="adminProductSearch" class="w-full px-4 py-2 border border-pink-light rounded-lg mb-4" placeholder="Buscar producto...">
                         <div id="productsList" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
-                            <!-- Lista de productos se cargará aquí -->
                             <p id="noProducts" class="col-span-full text-pink-dark/60">No hay productos guardados.</p>
                         </div>
                     </div>
@@ -289,20 +260,17 @@
             </div>
 
             
-            <!-- Pestaña: Configuración -->
             <div id="config" class="tab-content hidden">
                 <div class="max-w-2xl mx-auto space-y-6">
                     <div class="bg-white p-6 rounded-2xl shadow-lg">
                         <h2 class="text-2xl font-bold text-pink-secondary mb-6">Configuración General</h2>
                         
                         <div class="space-y-4">
-                            <!-- Nombre de la Tienda -->
                             <div>
                                 <label for="storeName" class="block text-sm font-medium text-pink-dark mb-1">Nombre de la Tienda</label>
                                 <input type="text" id="storeName" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
                             </div>
 
-                            <!-- URL del Logo -->
                             <div>
                                 <label for="logoUrl" class="block text-sm font-medium text-pink-dark mb-1">URL del Logo de la Tienda</label>
                                 <input type="url" id="logoUrl" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none" placeholder="https://ejemplo.com/logo.png">
@@ -313,7 +281,6 @@
                                 <input type="number" id="shippingCost" min="0" step="0.01" class="w-full px-4 py-2 border border-pink-light rounded-lg focus:ring-2 focus:ring-pink-primary outline-none">
                             </div>
 
-                            <!-- Configuración de Folios -->
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label for="folioPrefix" class="block text-sm font-medium text-pink-dark mb-1">Prefijo de Folio</label>
@@ -345,25 +312,19 @@
         </main>
     </div>
 
-    <!-- Notificación Toast -->
     <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-xl opacity-0 transform translate-y-10 transition-all duration-500 z-50">
         ¡Guardado correctamente!
     </div>
 
-    <!-- ¡NUEVO! Modal para Gestionar Pagos y Envíos -->
     <div id="manageOrderModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 opacity-0 pointer-events-none">
         <div class="bg-white w-full max-w-lg p-6 rounded-2xl shadow-2xl space-y-4" id="modalContent">
             <div class="flex justify-between items-center">
                 <h2 class="text-2xl font-bold text-pink-secondary">Gestionar Pedido (<span id="modalFolio"></span>)</h2>
-                <button id="closeModalBtn" class="text-pink-dark/70 hover:text-pink-primary">&times;</button>
+                <button id="closeModalBtn" class="text-pink-dark/70 hover:text-pink-primary text-3xl font-bold">&times;</button>
             </div>
             
-            <input type="hidden" id="modalOrderId"> <!-- Guarda el ID del pedido -->
-            
-            <!-- Sección de Pagos -->
-            <div class="space-y-4">
+            <input type="hidden" id="modalOrderId"> <div class="space-y-4">
                 <h3 class="text-lg font-semibold text-pink-dark">Gestión de Pagos</h3>
-                <!-- Resumen Financiero -->
                 <div class="grid grid-cols-3 gap-2 text-center">
                     <div>
                         <span class="text-xs text-pink-dark/70">TOTAL</span>
@@ -379,7 +340,6 @@
                     </div>
                 </div>
                 
-                <!-- Formulario de Abono -->
                 <div class="space-y-2">
                     <label for="addPaymentAmount" class="text-sm font-medium text-pink-dark">Añadir Abono:</label>
                     <div class="flex gap-2">
@@ -388,17 +348,14 @@
                     </div>
                 </div>
                 
-                <!-- Historial de Pagos -->
                 <div>
                     <h4 class="text-sm font-medium text-pink-dark mb-2">Historial de Pagos:</h4>
                     <div id="paymentHistoryList" class="max-h-24 overflow-y-auto bg-pink-bg p-2 rounded-lg space-y-1">
-                        <!-- historial de pagos aquí -->
                         <p id="noPayments" class="text-pink-dark/60 text-sm">No hay pagos registrados.</p>
                     </div>
                 </div>
             </div>
             
-            <!-- Sección de Entrega -->
             <div class="pt-4 border-t border-pink-100">
                 <h3 class="text-lg font-semibold text-pink-dark mb-2">Gestión de Entrega</h3>
                 <div class="flex justify-between items-center">
@@ -414,7 +371,6 @@
     </div>
 
 
-    <!-- Script de Registro de PWA -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -429,11 +385,6 @@
         }
     </script>
 
-    <!-- ================================================================== -->
-    <!-- Carga de Firebase y Lógica de la App -->
-    <!-- ================================================================== -->
-    
-    <!-- Importar Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
@@ -450,10 +401,10 @@
             collection, 
             onSnapshot,
             query,
-            getDoc, // ¡NUEVO! Necesario para la lógica de edición
+            getDoc,
             deleteDoc,
             serverTimestamp,
-            arrayUnion // ¡NUEVO! Para el historial de pagos
+            arrayUnion 
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
@@ -540,7 +491,7 @@
         const nextFolioInput = document.getElementById('nextFolio');
         const saveSettingsBtn = document.getElementById('saveSettingsBtn');
         
-        // ¡NUEVO! Elementos de la Modal
+        // Elementos de la Modal
         const manageOrderModal = document.getElementById('manageOrderModal');
         const modalContent = document.getElementById('modalContent');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -583,7 +534,7 @@
         let settingsDocRef; 
 
         // ------------------------------------------------------------------
-        // Lógica de Autenticación (¡MODIFICADA PARA AUTH REAL!)
+        // Lógica de Autenticación
         // ------------------------------------------------------------------
 
         onAuthStateChanged(auth, (user) => {
@@ -663,7 +614,6 @@
         // ------------------------------------------------------------------
         
         function initFirestoreRefs() {
-            if (!userId) return;
             // ¡RUTAS CAMBIADAS! Ya no dependen de 'userId'
             productCollectionRef = collection(db, 'products');
             ordersCollectionRef = collection(db, 'orders');
@@ -751,11 +701,10 @@
             // Calculadora de Envío
             orderKmInput.addEventListener('input', updateOrderSummary);
             
-            // ¡NUEVO! Listeners de la Modal
+            // Listeners de la Modal
             closeModalBtn.addEventListener('click', closeManageModal);
             addPaymentBtn.addEventListener('click', onRegistrarPago);
             toggleDeliveryBtn.addEventListener('click', onToggleDelivery);
-            // Cerrar modal al hacer clic en el fondo
             manageOrderModal.addEventListener('click', (e) => {
                 if (e.target === manageOrderModal) {
                     closeManageModal();
@@ -808,7 +757,6 @@
                         ordersData.push(order); // Guardar caché local
                         orderItems.push(renderOrderCard(order));
                     });
-                    // ¡NUEVO! Ordenar pedidos por fecha, más nuevos primero
                     ordersList.innerHTML = orderItems.sort((a, b) => {
                         const orderA = ordersData.find(o => o.id === a.match(/data-id="([^"]+)"/)[1]);
                         const orderB = ordersData.find(o => o.id === b.match(/data-id="([^"]+)"/)[1]);
@@ -941,7 +889,7 @@
                     loadOrderForEditing(orderId);
                 }
                 
-                // ¡NUEVO! Botón de Gestionar Pedido ($)
+                // Botón de Gestionar Pedido ($)
                 if (e.target.classList.contains('manage-order')) {
                     const order = ordersData.find(o => o.id === orderId);
                     if (order) {
@@ -1172,7 +1120,6 @@
             }
         }
 
-        // --- Guardar Pedido (¡MODIFICADO!) ---
         async function onSaveOrder(e) {
             e.preventDefault();
             
@@ -1197,38 +1144,33 @@
             try {
                 if (editingOrderId) {
                     // --- MODO ACTUALIZACIÓN ---
-                    // ¡Importante! Debemos recalcular el saldo
-                    
-                    // 1. Obtener el pedido actual para no perder los pagos
                     const orderDoc = await getDoc(doc(db, 'orders', editingOrderId));
                     const currentOrder = orderDoc.data();
                     const currentPagado = currentOrder.pagado || 0;
                     const currentHistorial = currentOrder.historialPagos || [];
                     
-                    // 2. Recalcular saldo y estado de pago
                     const newTotal = summary.total;
                     const newSaldo = newTotal - currentPagado;
                     const newStatusPago = newSaldo <= 0.01 ? 'Liquidado' : (currentPagado > 0 ? 'Abonado' : 'Pendiente');
                     
-                    // 3. Fusionar datos
                     const updatedOrderData = {
-                        ...orderData, // Nuevos items, cliente, total, etc.
+                        ...orderData, 
                         pagado: currentPagado,
                         historialPagos: currentHistorial,
                         saldoPendiente: newSaldo,
                         statusPago: newStatusPago,
-                        statusEntrega: currentOrder.statusEntrega // Mantener estado de entrega
+                        statusEntrega: currentOrder.statusEntrega,
+                        folio: currentOrder.folio, // Mantener folio original
+                        createdAt: currentOrder.createdAt // Mantener fecha original
                     };
                     
-                    await setDoc(doc(db, 'orders', editingOrderId), updatedOrderData, { merge: true });
+                    await setDoc(doc(db, 'orders', editingOrderId), updatedOrderData);
                     showToast("Pedido actualizado");
 
                 } else {
                     // --- MODO CREACIÓN (NUEVO PEDIDO) ---
-                    // Generar folio
                     const folioString = appSettings.folioPrefix + String(appSettings.nextFolio).padStart(4, '0');
                     
-                    // ¡NUEVO! Añadir campos de pago y estado
                     orderData.folio = folioString;
                     orderData.createdAt = serverTimestamp();
                     orderData.pagado = 0;
@@ -1239,7 +1181,6 @@
                     
                     await addDoc(ordersCollectionRef, orderData);
                     
-                    // Incrementar el folio en la config
                     const newNextFolio = appSettings.nextFolio + 1;
                     await setDoc(settingsDocRef, { nextFolio: newNextFolio }, { merge: true });
                     
@@ -1255,7 +1196,6 @@
         }
         
         async function loadOrderForEditing(orderId) {
-            // Usamos getDoc para asegurar que cargamos la última versión
             const orderDoc = await getDoc(doc(db, 'orders', orderId));
             if (!orderDoc.exists()) {
                 showToast("No se encontró el pedido", true);
@@ -1263,22 +1203,18 @@
             }
             const order = orderDoc.data();
             
-            // 1. Poner datos en el formulario
             editingOrderId = orderId;
             document.getElementById('orderClientName').value = order.clientName;
             document.getElementById('orderKm').value = order.distance;
-            orderCart = JSON.parse(JSON.stringify(order.items)); // Copia profunda
+            orderCart = JSON.parse(JSON.stringify(order.items)); 
             
-            // 2. Actualizar UI del carrito
             renderOrderCart();
             updateOrderSummary();
             
-            // 3. Cambiar botón a modo "Actualizar"
             saveOrderBtn.textContent = `Actualizar Pedido (${order.folio})`;
             saveOrderBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
             saveOrderBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
             
-            // 4. Cambiar a la pestaña del cotizador
             tabs.forEach(tab => {
                 if (tab.dataset.tab === 'cotizador') {
                     tab.click();
@@ -1289,7 +1225,7 @@
         }
         
         // ------------------------------------------------------------------
-        // Lógica de Pestaña PEDIDOS GUARDADOS (¡MODIFICADA!)
+        // Lógica de Pestaña PEDIDOS GUARDADOS
         // ------------------------------------------------------------------
 
         function renderOrderCard(order) {
@@ -1326,23 +1262,20 @@
                     </div>
                     <p class="text-sm text-pink-dark/60 mb-3">${date}</p>
                     
-                    <!-- Estados -->
                     <div class="flex gap-2 mb-3">
                         ${paymentStatusTag}
                         ${deliveryStatusTag}
                     </div>
                     
-                    <!-- ¡NUEVO! Resumen Financiero -->
                     <div class="mt-4 pt-4 border-t border-pink-100 space-y-1">
                         <p class="flex justify-between text-sm"><span>Total:</span> <span class="font-medium">${formatCurrency(order.total)}</span></p>
                         <p class="flex justify-between text-sm text-green-600"><span>Pagado:</span> <span class="font-medium">${formatCurrency(order.pagado)}</span></p>
                         <p class="flex justify-between text-base font-bold text-red-600"><span>Saldo:</span> <span>${formatCurrency(order.saldoPendiente)}</span></p>
                     </div>
 
-                    <!-- Botones de Acción (4 botones) -->
                     <div class="mt-6 grid grid-cols-4 gap-2">
                         <button class="manage-order w-full text-xs bg-green-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-green-600 transition-all" title="Gestionar Pagos/Envío">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto pointer-events-none" viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.151-.102.331-.16.533-.16s.382.058.533.16l3.867 2.6c.294.198.467.538.467.91s-.173.712-.467.91l-3.867 2.6c-.151.102-.331.16-.533.16s-.382-.058-.533-.16L4.567 11.84c-.294-.198-.467-.538-.467-.91s.173-.712.467-.91l3.867-2.6zM12 6c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm-4 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zM8 14c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm4 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zM4 6c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto pointer-events-none" viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.151-.102.331-.16.533-.16s.382.058.533.16l3.867 2.6c.294.198.467.538.467.91s-.173.712-.467.91l-3.867 2.6c-.151.102-.331.16-.533-.16s-.382-.058-.533-.16L4.567 11.84c-.294-.198-.467-.538-.467-.91s.173-.712.467-.91l3.867-2.6zM12 6c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm-4 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zM8 14c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm4 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zM4 6c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z" /></svg>
                         </button>
                         <button class="download-order-pdf w-full text-xs bg-blue-500 text-white py-2 px-2 rounded-lg font-semibold hover:bg-blue-600 transition-all" title="Descargar PDF">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto pointer-events-none" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 11-2 0V4H6v12a1 1 0 11-2 0V4zm8 10a1 1 0 100-2H8a1 1 0 100 2h4z" clip-rule="evenodd" /></svg>
@@ -1359,7 +1292,7 @@
         }
         
         // ------------------------------------------------------------------
-        // Lógica de Generación de PDF (¡MODIFICADA!)
+        // Lógica de Generación de PDF
         // ------------------------------------------------------------------
         
         function getBasePDF(title) {
@@ -1425,7 +1358,7 @@
             doc.text("Total Pedido:", 140, finalY + 24);
             doc.text(formatCurrency(order.total), 190, finalY + 24, { align: 'right' });
             
-            // --- ¡NUEVO! Resumen de Pagos ---
+            // --- Resumen de Pagos ---
             doc.setFont("helvetica", "normal");
             doc.setTextColor(20, 20, 20);
             doc.text("Pagado:", 140, finalY + 31);
@@ -1443,6 +1376,7 @@
         // --- Guardar Ajustes de Configuración ---
         async function onSaveSettings(e) {
             e.preventDefault();
+            // Recolectar todos los nuevos datos
             const newCost = parseFloat(shippingCostInput.value);
             const newName = storeNameInput.value.trim();
             const newPrefix = folioPrefixInput.value;
@@ -1468,6 +1402,7 @@
             };
 
             try {
+                // Usamos setDoc para sobreescribir (o crear)
                 await setDoc(settingsDocRef, newSettings);
                 appSettings = newSettings; 
                 showToast("Ajustes guardados");
@@ -1549,9 +1484,13 @@
             const nuevoSaldo = order.total - nuevoPagado;
             const nuevoStatusPago = nuevoSaldo <= 0.01 ? 'Liquidado' : 'Abonado'; // 0.01 para errores de decimales
             
+            if (nuevoSaldo < -0.01) {
+                showToast("El monto del abono excede el saldo pendiente.", true);
+                return;
+            }
+            
             const nuevoPago = {
-                fecha: serverTimestamp(),
-                fecha: new Date(),
+                fecha: new Date(), // ¡CORREGIDO! Usar new Date() en lugar de serverTimestamp()
                 monto: montoAbono
             };
             
@@ -1565,9 +1504,9 @@
                 
                 showToast("¡Pago registrado!");
                 addPaymentAmount.value = ''; // Limpiar
-                // Actualizar la modal (el listener de onSnapshot lo hará automáticamente)
-                // Pero lo forzamos por si acaso
-                const updatedOrder = {...order, pagado: nuevoPagado, saldoPendiente: nuevoSaldo, statusPago: nuevoStatusPago, historialPagos: [...(order.historialPagos || []), {fecha: new Date(), monto: montoAbono}]};
+                
+                // Actualizar la modal (el listener de onSnapshot lo hará, pero forzamos)
+                const updatedOrder = {...order, id: id, pagado: nuevoPagado, saldoPendiente: nuevoSaldo, statusPago: nuevoStatusPago, historialPagos: [...(order.historialPagos || []), nuevoPago]};
                 openManageModal(updatedOrder); // Re-abrir modal con datos frescos
                 
             } catch (error) {
@@ -1606,4 +1545,3 @@
     </script>
 </body>
 </html>
-
